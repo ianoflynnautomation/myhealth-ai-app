@@ -33,3 +33,6 @@ coverage
 .eslintcache
 *.tsbuildinfo
 .vite
+
+# CI test reports
+test-results
