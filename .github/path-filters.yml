@@ -1,0 +1,5 @@
+frontend:
+  - "src/frontend/**"
+  - ".github/workflows/ci-pr.yml"
+  - ".github/workflows/ci-main.yml"
+  - ".github/path-filters.yml"

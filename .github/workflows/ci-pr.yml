@@ -1,0 +1,160 @@
+name: CI PR Validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - ".gitattributes"
+      - ".gitignore"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint_workflows:
+    name: Lint Workflows
+    permissions:
+      contents: read
+      checks: write
+    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/lint-workflows.yml@a9bc3cb4b8ea83909408c94409b9de360160b96b  # v1.8.0
+    with:
+      zizmor-enforce: false
+
+  detect_changes:
+    name: Detect Changed Paths
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      changes: ${{ steps.changes.outputs.changes }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - id: changes
+        uses: ianoflynnautomation/bjjeire-ci-templates/actions/detect-changes@a9bc3cb4b8ea83909408c94409b9de360160b96b  # v1.8.0
+        with:
+          filters: .github/path-filters.yml
+
+  security_scan:
+    name: Security Scan
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write
+    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/security-scan.yml@a9bc3cb4b8ea83909408c94409b9de360160b96b  # v1.8.0
+    with:
+      dependency-review-fail-on-severity: high
+      dependency-review-comment-summary: on-failure
+      sast-configs: "p/typescript p/react"
+      sast-severity: ERROR
+      sast-enforce: false
+
+  frontend_lint:
+    name: Frontend Lint
+    needs: detect_changes
+    if: contains(fromJSON(needs.detect_changes.outputs.changes), 'frontend')
+    permissions:
+      contents: read
+      actions: read
+    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/node-build-test.yml@f69cd6a0c7977cb516ae8f7fe8fbdb1b7c1bc0a1  # npm download cache
+    with:
+      job-name: Frontend Lint
+      working-directory: src/frontend
+      container-image: node:26-bookworm-slim
+      cache-key-prefix: myhealth-frontend
+      timeout-minutes: 15
+      env-vars: |
+        HUSKY=0
+      commands: |
+        npx oxlint --deny-warnings
+        npx eslint . --max-warnings 0
+        npx prettier --check .
+
+  frontend_typecheck:
+    name: Frontend Typecheck
+    needs: detect_changes
+    if: contains(fromJSON(needs.detect_changes.outputs.changes), 'frontend')
+    permissions:
+      contents: read
+      actions: read
+    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/node-build-test.yml@f69cd6a0c7977cb516ae8f7fe8fbdb1b7c1bc0a1  # npm download cache
+    with:
+      job-name: Frontend Typecheck
+      working-directory: src/frontend
+      container-image: node:26-bookworm-slim
+      cache-key-prefix: myhealth-frontend
+      timeout-minutes: 15
+      env-vars: |
+        HUSKY=0
+      commands: npm run typecheck
+
+  frontend_unit:
+    name: Frontend Unit Tests
+    needs: detect_changes
+    if: contains(fromJSON(needs.detect_changes.outputs.changes), 'frontend')
+    permissions:
+      contents: read
+      actions: read
+    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/node-build-test.yml@f69cd6a0c7977cb516ae8f7fe8fbdb1b7c1bc0a1  # npm download cache
+    with:
+      job-name: Frontend Unit Tests
+      working-directory: src/frontend
+      container-image: node:26-bookworm-slim
+      cache-key-prefix: myhealth-frontend
+      timeout-minutes: 15
+      env-vars: |
+        HUSKY=0
+      commands: |
+        mkdir -p test-results
+        npx vitest run --coverage --reporter=default --reporter=junit --outputFile.junit=test-results/vitest-unit.xml
+      artifact-name: frontend-vitest-unit
+      artifact-path: |
+        src/frontend/test-results/vitest-unit.xml
+        src/frontend/coverage/
+      artifact-if-no-files-found: error
+      upload-artifact-always: true
+      artifact-retention-days: 7
+
+  frontend_build:
+    name: Frontend Build
+    needs: detect_changes
+    if: contains(fromJSON(needs.detect_changes.outputs.changes), 'frontend')
+    permissions:
+      contents: read
+      actions: read
+    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/node-build-test.yml@f69cd6a0c7977cb516ae8f7fe8fbdb1b7c1bc0a1  # npm download cache
+    with:
+      job-name: Frontend Build
+      working-directory: src/frontend
+      container-image: node:26-bookworm-slim
+      cache-key-prefix: myhealth-frontend
+      timeout-minutes: 15
+      env-vars: |
+        HUSKY=0
+      commands: npm run build
+
+  pr_complete:
+    name: PR Checks Complete
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: always()
+    needs:
+      - lint_workflows
+      - detect_changes
+      - security_scan
+      - frontend_lint
+      - frontend_typecheck
+      - frontend_unit
+      - frontend_build
+    steps:
+      - name: Verify all required checks succeeded or were intentionally skipped
+        uses: ianoflynnautomation/bjjeire-ci-templates/actions/check-required-jobs@a9bc3cb4b8ea83909408c94409b9de360160b96b  # v1.8.0
+        with:
+          needs-json: ${{ toJson(needs) }}
+          summary-title: PR checks
