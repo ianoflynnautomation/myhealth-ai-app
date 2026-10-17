@@ -1,0 +1,24 @@
+# Local source documents (never commit)
+/data
+
+# Dependencies and build output anywhere in the repo
+node_modules/
+dist/
+coverage/
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Claude Code per-user settings
+.claude/settings.local.json
