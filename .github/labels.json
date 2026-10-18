@@ -1,0 +1,67 @@
+[
+  {
+    "name": "area/frontend",
+    "color": "1d76db",
+    "description": "React app under src/frontend"
+  },
+  {
+    "name": "area/backend",
+    "color": "0e8a16",
+    "description": "Python API under src/backend"
+  },
+  {
+    "name": "area/docs",
+    "color": "0075ca",
+    "description": "Specs, docs, and the task list"
+  },
+  {
+    "name": "area/ci",
+    "color": "5319e7",
+    "description": "GitHub workflows, ignore rules, and repo automation"
+  },
+  {
+    "name": "area/dependencies",
+    "color": "fbca04",
+    "description": "Lockfiles, package manifests, and Dependabot"
+  },
+  {
+    "name": "type/feature",
+    "color": "0e8a16",
+    "description": "Title starts with feat"
+  },
+  {
+    "name": "type/fix",
+    "color": "d73a4a",
+    "description": "Title starts with fix"
+  },
+  {
+    "name": "type/chore",
+    "color": "cfd3d7",
+    "description": "Title starts with chore, ci, build, or style"
+  },
+  {
+    "name": "type/docs",
+    "color": "0075ca",
+    "description": "Title starts with docs"
+  },
+  {
+    "name": "type/refactor",
+    "color": "fbca04",
+    "description": "Title starts with refactor"
+  },
+  {
+    "name": "type/test",
+    "color": "bfd4f2",
+    "description": "Title starts with test"
+  },
+  {
+    "name": "type/perf",
+    "color": "5319e7",
+    "description": "Title starts with perf"
+  },
+  {
+    "name": "breaking",
+    "color": "b60205",
+    "description": "Title uses a conventional commit breaking marker"
+  }
+]
