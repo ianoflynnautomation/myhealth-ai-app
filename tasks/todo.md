@@ -4,7 +4,24 @@ Spec: [docs/SPEC-app-shell.md](../docs/SPEC-app-shell.md). Plan: [tasks/plan.md]
 
 One heading is one change. Write that test, watch it fail, make it pass, run `make check` from `src/backend`, commit, mark the heading done, and stop.
 
-Commit subject: `feat: <heading in lowercase>` on branch `feature/app-shell`.
+One pull request is one slice from the table below. Finish that branch and merge it before starting the next. Do not add later slices to `feature/app-shell`.
+
+| PR | Branch | Tasks | Flag |
+| --- | --- | --- | --- |
+| 1 | `feature/app-shell` | 1–4 | `DOCUMENTS_ENABLED` defaults off. Health is always on. |
+| 2 | `feature/list-stored-pdf` | 5–6 | Same flag, still off. |
+| 3 | `feature/cite-stored-page` | 7–10 | `CHAT_ENABLED` defaults off. |
+| 4 | `feature/reject-bad-uploads` | 11–12 | Turn `DOCUMENTS_ENABLED` on for the stub profile at the end of this PR. Upload then matches the spec. |
+| 5 | `feature/reject-bad-chat` | 13–18 | Turn `CHAT_ENABLED` on for the stub profile at the end of this PR. |
+| 6 | `feature/local-settings` | 19–25 | `PROFILE=local` is the opt-in. No extra flag. |
+| 7 | `feature/docling-parser` | 26–27 | Used only when `PROFILE=local`. |
+| 8 | `feature/qdrant-corpus` | 28–29 | Used only when `PROFILE=local`. |
+| 9 | `feature/ollama-chat` | 30–32 | Used only when `PROFILE=local`. |
+| 10 | `feature/local-factory` | 33–34 | Wires the local adapters. Stub stays the default. |
+
+Cut each branch from `main` after the previous PR merges. A slice that is not safe to call yet stays behind its flag, default off, and tests opt in.
+
+Commit subject: `feat: <heading in lowercase>` on that slice's branch.
 
 ```sh
 cd src/backend

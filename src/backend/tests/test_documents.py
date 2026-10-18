@@ -14,9 +14,15 @@ def _fixture_pdf() -> bytes:
     return bytes(pdf.output())
 
 
+def test_document_upload_is_off_unless_enabled() -> None:
+    response = TestClient(create_app()).post("/documents")
+
+    assert response.status_code == 404
+
+
 def test_post_document_stores_pdf() -> None:
     pdf = _fixture_pdf()
-    response = TestClient(create_app()).post(
+    response = TestClient(create_app(documents_enabled=True)).post(
         "/documents",
         files={"file": ("example.pdf", pdf, "application/pdf")},
     )
