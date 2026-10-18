@@ -1,0 +1,34 @@
+# Area labels only. Type labels come from the pull request title.
+# A pull request can carry more than one area label.
+# Branch names are not used. feature/ does not mean type/feature.
+# With sync-labels, an area label is removed when its files leave the diff.
+
+area/frontend:
+  - changed-files:
+      - any-glob-to-any-file: src/frontend/**
+
+area/backend:
+  - changed-files:
+      - any-glob-to-any-file: src/backend/**
+
+area/docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - docs/**
+          - tasks/**
+          - "*.md"
+          - "**/*.md"
+
+area/ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+          - .gitignore
+
+area/dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/uv.lock"
+          - "**/package-lock.json"
+          - "**/pyproject.toml"
+          - .github/dependabot.yml
