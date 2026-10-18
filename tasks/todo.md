@@ -221,16 +221,18 @@ make check
 
 **Description:** The chat route searches the store and quotes the top page.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `POST /chat` with `What is the DemoMarker value?` returns 200.
-- [ ] `citations[0]` has `content` `DemoMarker value is 10 units.`, `sourcePage` 1, `sourceFile` of the upload, and `id` `<document id>:1`.
-- [ ] `outputText` equals that content.
+- [x] `POST /chat` with `What is the DemoMarker value?` returns 200.
+- [x] `citations[0]` has `content` `DemoMarker value is 10 units.`, `sourcePage` 1, `sourceFile` of the upload, and `id` `<document id>:1`.
+- [x] `outputText` equals that content.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_question_cites_stored_page -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_chat_should_cite_the_stored_page -q`
+- [x] `make check`
 
 **Dependencies:** Task 7
 
