@@ -144,15 +144,17 @@ make check
 
 **Description:** The list shows what was stored and does not include chunk text.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] After the Task 4 upload, `GET /documents` returns that `id`, `sourceFile`, `pageCount`, and `chunkCount`.
-- [ ] The body has no page text and no `content` field.
+- [x] After the Task 4 upload, `GET /documents` returns that `id`, `sourceFile`, `pageCount`, and `chunkCount`.
+- [x] The body has no page text and no `content` field.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_documents.py::test_get_documents_lists_file -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_documents.py::test_get_documents_lists_file -q`
+- [x] `make check`
 
 **Dependencies:** Task 4
 
@@ -168,15 +170,17 @@ make check
 
 **Description:** A retry of the same upload is not a second document.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] The second `POST` returns 200 and the same `id`.
-- [ ] `GET /documents` still returns one entry.
+- [x] The second `POST` returns 200 and the same `id`.
+- [x] `GET /documents` still returns one entry.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_documents.py::test_same_bytes_return_existing_document -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_documents.py::test_same_bytes_return_existing_document -q`
+- [x] `make check`
 
 **Dependencies:** Task 5
 
