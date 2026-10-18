@@ -5,6 +5,11 @@
 node_modules/
 dist/
 coverage/
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.pyright/
 
 # Env and secrets
 .env
