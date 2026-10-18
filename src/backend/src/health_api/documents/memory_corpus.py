@@ -1,0 +1,51 @@
+from dataclasses import dataclass
+
+from health_api.documents.text_layer_parser import ParsedPage
+
+
+@dataclass(frozen=True)
+class StoredChunk:
+    document_id: str
+    source_file: str
+    page_number: int
+    text: str
+
+
+@dataclass(frozen=True)
+class StoredDocument:
+    id: str
+    source_file: str
+    page_count: int
+    chunk_count: int
+
+
+class MemoryCorpus:
+    def __init__(self) -> None:
+        self.documents: dict[str, StoredDocument] = {}
+        self.chunks: list[StoredChunk] = []
+
+    def add(
+        self,
+        *,
+        document_id: str,
+        source_file: str,
+        pages: list[ParsedPage],
+    ) -> StoredDocument:
+        chunks = [
+            StoredChunk(
+                document_id=document_id,
+                source_file=source_file,
+                page_number=page.page_number,
+                text=page.text,
+            )
+            for page in pages
+        ]
+        self.chunks.extend(chunks)
+        stored = StoredDocument(
+            id=document_id,
+            source_file=source_file,
+            page_count=len(pages),
+            chunk_count=len(chunks),
+        )
+        self.documents[document_id] = stored
+        return stored

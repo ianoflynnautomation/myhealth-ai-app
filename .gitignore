@@ -4,7 +4,31 @@
 # Dependencies and build output anywhere in the repo
 node_modules/
 dist/
+dist-ssr/
+build/
 coverage/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+test-results/
+*.tsbuildinfo
+.eslintcache
+.vite/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.pyright/
+.mypy_cache/
+.pytype/
+.tox/
+.nox/
+*.egg-info/
+*.egg
 
 # Env and secrets
 .env
