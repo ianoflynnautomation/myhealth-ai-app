@@ -30,7 +30,10 @@ class MemoryCorpus:
         document_id: str,
         source_file: str,
         pages: list[ParsedPage],
-    ) -> StoredDocument:
+    ) -> tuple[StoredDocument, bool]:
+        existing = self.documents.get(document_id)
+        if existing is not None:
+            return existing, False
         chunks = [
             StoredChunk(
                 document_id=document_id,
@@ -48,4 +51,4 @@ class MemoryCorpus:
             chunk_count=len(chunks),
         )
         self.documents[document_id] = stored
-        return stored
+        return stored, True

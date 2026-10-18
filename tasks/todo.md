@@ -170,15 +170,17 @@ make check
 
 **Description:** A retry of the same upload is not a second document.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] The second `POST` returns 200 and the same `id`.
-- [ ] `GET /documents` still returns one entry.
+- [x] The second `POST` returns 200 and the same `id`.
+- [x] `GET /documents` still returns one entry.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_documents.py::test_same_bytes_return_existing_document -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_documents.py::test_same_bytes_return_existing_document -q`
+- [x] `make check`
 
 **Dependencies:** Task 5
 

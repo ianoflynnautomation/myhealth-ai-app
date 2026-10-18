@@ -56,3 +56,15 @@ def test_get_documents_lists_file() -> None:
             }
         ]
     }
+
+
+def test_same_bytes_return_existing_document() -> None:
+    pdf = _fixture_pdf()
+    client = TestClient(create_app(documents_enabled=True))
+    files = {"file": ("example.pdf", pdf, "application/pdf")}
+    first = client.post("/documents", files=files)
+    second = client.post("/documents", files=files)
+
+    assert second.status_code == 200
+    assert second.json()["id"] == first.json()["id"]
+    assert client.get("/documents").json()["documents"] == [first.json()]

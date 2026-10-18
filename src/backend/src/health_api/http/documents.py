@@ -1,6 +1,6 @@
 import hashlib
 
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, Response, UploadFile
 from pydantic import BaseModel, Field
 
 from health_api.documents.memory_corpus import MemoryCorpus
@@ -36,14 +36,16 @@ def register_documents(app: FastAPI, corpus: MemoryCorpus) -> None:
         )
 
     @app.post("/documents", status_code=201)
-    async def upload_document(file: UploadFile = _UPLOAD) -> DocumentResponse:
+    async def upload_document(response: Response, file: UploadFile = _UPLOAD) -> DocumentResponse:
         data = await file.read()
         pages = parse_text_layer(data)
-        stored = corpus.add(
+        stored, created = corpus.add(
             document_id=hashlib.sha256(data).hexdigest(),
             source_file=file.filename or "upload.pdf",
             pages=pages,
         )
+        if not created:
+            response.status_code = 200
         return DocumentResponse(
             id=stored.id,
             source_file=stored.source_file,
