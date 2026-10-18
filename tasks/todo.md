@@ -75,14 +75,16 @@ make check
 
 **Description:** pypdf reads a one-page PDF built with fpdf2. No HTTP route in this task. If the extracted text is wrapped or split, fix the fixture here and stop.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] The page text is `DemoMarker value is 10 units.` and the page number is 1.
+- [x] The page text is `DemoMarker value is 10 units.` and the page number is 1.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_text_layer_parser.py::test_parser_reads_fixture_sentence -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_text_layer_parser.py::test_parser_reads_fixture_sentence -q`
+- [x] `make check`
 
 **Dependencies:** Task 1
 
