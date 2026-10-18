@@ -196,15 +196,17 @@ make check
 
 **Description:** In-memory search is token overlap. This task does not add a route.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] Searching for `DemoMarker` returns the stored page's text, file name, and page number 1.
-- [ ] A query whose words are absent returns no pages.
+- [x] Searching for `DemoMarker` returns the stored page's text, file name, and page number 1.
+- [x] A query whose words are absent returns no pages.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_memory_corpus.py::test_search_returns_matching_page -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_memory_corpus.py::test_search_should_return_the_page_with_the_question_words -q`
+- [x] `make check`
 
 **Dependencies:** Task 4
 

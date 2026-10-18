@@ -1,6 +1,13 @@
+import re
 from dataclasses import dataclass
 
 from health_api.documents.text_layer_parser import ParsedPage
+
+_TOKEN = re.compile(r"[0-9A-Za-z]+")
+
+
+def _tokens(text: str) -> set[str]:
+    return {token.casefold() for token in _TOKEN.findall(text)}
 
 
 @dataclass(frozen=True)
@@ -52,3 +59,9 @@ class MemoryCorpus:
         )
         self.documents[document_id] = stored
         return stored, True
+
+    def search(self, query: str) -> list[StoredChunk]:
+        needles = _tokens(query)
+        if not needles:
+            return []
+        return [chunk for chunk in self.chunks if needles & _tokens(chunk.text)]
