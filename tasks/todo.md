@@ -100,15 +100,17 @@ make check
 
 **Description:** The upload route parses the PDF, keeps one chunk per page in memory, and returns the new document.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `POST /documents` returns 201.
-- [ ] `pageCount` is 1, `chunkCount` is 1, `sourceFile` is the uploaded name, and `id` is the SHA-256 hex of the bytes.
+- [x] `POST /documents` returns 201.
+- [x] `pageCount` is 1, `chunkCount` is 1, `sourceFile` is the uploaded name, and `id` is the SHA-256 hex of the bytes.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_documents.py::test_post_document_stores_pdf -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_documents.py::test_post_document_stores_pdf -q`
+- [x] `make check`
 
 **Dependencies:** Tasks 2 and 3
 
