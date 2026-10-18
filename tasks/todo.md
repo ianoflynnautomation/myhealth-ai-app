@@ -273,14 +273,16 @@ make check
 
 **Description:** Stored text that does not share words with the question is not a citation.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] After storing the fixture PDF, a question with none of its words returns 200, `citations` `[]`, and `outputText` `No stored document answers that.`
+- [x] After storing the fixture PDF, a question with none of its words returns 200, `citations` `[]`, and `outputText` `No stored document answers that.`
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_unmatched_question_returns_fixed_sentence -q`
-- [ ] `make check`
+- [x] The named test passed on the first run: `uv run pytest tests/test_chat.py::test_an_unmatched_question_should_return_the_fixed_sentence -q`. Search already drops a page with no shared words, and an empty citation list already returns the fixed sentence.
+- [x] `make check`
 
 **Dependencies:** Task 9
 

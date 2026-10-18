@@ -62,3 +62,26 @@ def test_an_empty_store_should_return_the_fixed_sentence() -> None:
         "outputText": "No stored document answers that.",
         "citations": [],
     }
+
+
+def test_an_unmatched_question_should_return_the_fixed_sentence() -> None:
+    # Given
+    pdf = _fixture_pdf()
+    client = TestClient(create_app(documents_enabled=True, chat_enabled=True))
+    client.post(
+        "/documents",
+        files={"file": ("example.pdf", pdf, "application/pdf")},
+    )
+
+    # When
+    response = client.post(
+        "/chat",
+        json={"messages": [{"role": "user", "content": "Where was the zebra?"}]},
+    )
+
+    # Then
+    assert response.status_code == 200
+    assert response.json() == {
+        "outputText": "No stored document answers that.",
+        "citations": [],
+    }
