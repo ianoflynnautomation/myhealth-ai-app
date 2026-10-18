@@ -144,15 +144,17 @@ make check
 
 **Description:** The list shows what was stored and does not include chunk text.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] After the Task 4 upload, `GET /documents` returns that `id`, `sourceFile`, `pageCount`, and `chunkCount`.
-- [ ] The body has no page text and no `content` field.
+- [x] After the Task 4 upload, `GET /documents` returns that `id`, `sourceFile`, `pageCount`, and `chunkCount`.
+- [x] The body has no page text and no `content` field.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_documents.py::test_get_documents_lists_file -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_documents.py::test_get_documents_lists_file -q`
+- [x] `make check`
 
 **Dependencies:** Task 4
 
