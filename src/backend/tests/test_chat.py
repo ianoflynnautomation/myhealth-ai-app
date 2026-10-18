@@ -44,3 +44,21 @@ def test_chat_should_cite_the_stored_page() -> None:
             }
         ],
     }
+
+
+def test_an_empty_store_should_return_the_fixed_sentence() -> None:
+    # Given
+    client = TestClient(create_app(chat_enabled=True))
+
+    # When
+    response = client.post(
+        "/chat",
+        json={"messages": [{"role": "user", "content": "What is the DemoMarker value?"}]},
+    )
+
+    # Then
+    assert response.status_code == 200
+    assert response.json() == {
+        "outputText": "No stored document answers that.",
+        "citations": [],
+    }

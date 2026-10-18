@@ -249,14 +249,16 @@ make check
 
 **Description:** A new app must not invent a citation.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `POST /chat` returns 200, `citations` is `[]`, and `outputText` is `No stored document answers that.`
+- [x] `POST /chat` returns 200, `citations` is `[]`, and `outputText` is `No stored document answers that.`
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_empty_store_returns_fixed_sentence -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_an_empty_store_should_return_the_fixed_sentence -q`
+- [x] `make check`
 
 **Dependencies:** Task 8
 

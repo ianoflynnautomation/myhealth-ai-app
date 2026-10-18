@@ -30,16 +30,14 @@ def register_chat(app: FastAPI, corpus: MemoryCorpus) -> None:
     @app.post("/chat")
     def chat(body: ChatRequest) -> ChatResponse:
         hits = corpus.search(body.messages[-1].content)
-        top = hits[0]
         content = quote(hits)
-        return ChatResponse(
-            output_text=content,
-            citations=[
-                CitationResponse(
-                    id=f"{top.document_id}:{top.page_number}",
-                    source_file=top.source_file,
-                    source_page=top.page_number,
-                    content=content,
-                )
-            ],
-        )
+        citations = [
+            CitationResponse(
+                id=f"{hit.document_id}:{hit.page_number}",
+                source_file=hit.source_file,
+                source_page=hit.page_number,
+                content=hit.text,
+            )
+            for hit in hits[:1]
+        ]
+        return ChatResponse(output_text=content, citations=citations)
