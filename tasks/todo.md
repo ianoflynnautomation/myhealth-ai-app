@@ -50,15 +50,17 @@ make check
 
 **Description:** The running app answers a liveness check.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `GET /health` returns 200 and `{"status": "ok"}`.
+- [x] `GET /health` returns 200 and `{"status": "ok"}`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_health.py::test_health_returns_ok -q`
-- [ ] `make check`
-- [ ] `make dev` answers on `http://127.0.0.1:8000/health`, then stop the server
+- [x] RED then GREEN: `uv run pytest tests/test_health.py::test_health_returns_ok -q`
+- [x] `make check`
+- [x] `make dev` answers on `http://127.0.0.1:8000/health`, then stop the server
 
 **Dependencies:** Task 1
 
