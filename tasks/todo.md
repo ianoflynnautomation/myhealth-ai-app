@@ -11,7 +11,7 @@ One pull request is one slice from the table below. Finish that branch and merge
 | 1 | `feature/app-shell` | 1–4 | `DOCUMENTS_ENABLED` defaults off. Health is always on. |
 | 2 | `feature/list-stored-pdf` | 5–6 | Same flag, still off. |
 | 3 | `feature/cite-stored-page` | 7–10 | `CHAT_ENABLED` defaults off. |
-| 4 | `feature/reject-bad-uploads` | 11–12 | Turn `DOCUMENTS_ENABLED` on for the stub profile at the end of this PR. Upload then matches the spec. |
+| 4 | `feature/reject-bad-uploads` | 11–12 | `DOCUMENTS_ENABLED` defaults on. `CHAT_ENABLED` stays off. |
 | 5 | `feature/reject-bad-chat` | 13–18 | Turn `CHAT_ENABLED` on for the stub profile at the end of this PR. |
 | 6 | `feature/local-settings` | 19–25 | `PROFILE=local` is the opt-in. No extra flag. |
 | 7 | `feature/docling-parser` | 26–27 | Used only when `PROFILE=local`. |
@@ -297,15 +297,17 @@ make check
 
 **Description:** The first error response uses the spec error body. The file is not stored.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] Uploading `notes.txt` returns 415 and `{"error": {"code": "UNSUPPORTED_MEDIA_TYPE", ...}}`.
-- [ ] `GET /documents` does not list it.
+- [x] Uploading `notes.txt` returns 415 and `{"error": {"code": "UNSUPPORTED_MEDIA_TYPE", ...}}`.
+- [x] `GET /documents` does not list it.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_documents.py::test_non_pdf_upload_is_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_documents.py::test_a_non_pdf_upload_should_return_unsupported_media_type -q`
+- [x] `make check`
 
 **Dependencies:** Task 5
 
@@ -321,15 +323,17 @@ make check
 
 **Description:** The stub profile refuses a scan by refusing an empty text layer.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] An empty text layer returns 422 and `VALIDATION_ERROR`.
-- [ ] `GET /documents` does not list that file.
+- [x] An empty text layer returns 422 and `VALIDATION_ERROR`.
+- [x] `GET /documents` does not list that file.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_documents.py::test_pdf_with_no_text_is_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_documents.py::test_a_pdf_with_no_text_should_return_validation_error -q`
+- [x] `make check`
 
 **Dependencies:** Task 11
 

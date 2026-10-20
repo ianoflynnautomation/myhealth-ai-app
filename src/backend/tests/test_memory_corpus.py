@@ -1,5 +1,9 @@
+import pytest
+
 from health_api.documents.memory_corpus import MemoryCorpus
 from health_api.documents.text_layer_parser import ParsedPage
+
+pytestmark = pytest.mark.unit
 
 
 def test_search_should_return_the_page_with_the_question_words() -> None:

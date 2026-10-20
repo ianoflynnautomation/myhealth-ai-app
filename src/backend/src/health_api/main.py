@@ -7,7 +7,7 @@ from health_api.http.chat import register_chat
 from health_api.http.documents import register_documents
 
 
-def create_app(*, documents_enabled: bool = False, chat_enabled: bool = False) -> FastAPI:
+def create_app(*, documents_enabled: bool = True, chat_enabled: bool = False) -> FastAPI:
     app = FastAPI()
     corpus = MemoryCorpus()
 
@@ -22,11 +22,14 @@ def create_app(*, documents_enabled: bool = False, chat_enabled: bool = False) -
     return app
 
 
-def _enabled_from_env(name: str) -> bool:
-    return os.environ.get(name, "").lower() in {"1", "true", "yes"}
+def _enabled_from_env(name: str, *, default: bool) -> bool:
+    raw = os.environ.get(name)
+    if raw is None or raw.strip() == "":
+        return default
+    return raw.strip().lower() in {"1", "true", "yes"}
 
 
 app = create_app(
-    documents_enabled=_enabled_from_env("DOCUMENTS_ENABLED"),
-    chat_enabled=_enabled_from_env("CHAT_ENABLED"),
+    documents_enabled=_enabled_from_env("DOCUMENTS_ENABLED", default=True),
+    chat_enabled=_enabled_from_env("CHAT_ENABLED", default=False),
 )
