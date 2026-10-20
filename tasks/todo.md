@@ -646,14 +646,16 @@ make check
 
 **Description:** Building the stub app must not load Docling or the Qdrant client.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] Importing `create_app` and building a stub app leaves `docling` and `qdrant_client` out of `sys.modules`.
+- [x] Importing `create_app` and building a stub app leaves `docling` and `qdrant_client` out of `sys.modules`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_stub_app_does_not_import_local_clients -q`
-- [ ] `make check`
+- [x] The named test passed on the first run: `uv run pytest tests/test_config.py::test_the_stub_app_should_not_import_local_clients -q`. The stub app does not import those modules, so no production change.
+- [x] `make check`
 
 **Dependencies:** Task 19
 

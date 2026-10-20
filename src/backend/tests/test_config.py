@@ -1,3 +1,6 @@
+import importlib
+import sys
+
 import pytest
 from pydantic import ValidationError
 
@@ -81,3 +84,19 @@ def test_local_settings_should_require_a_data_dir() -> None:
     # Then
     settings = Settings(profile="local", data_dir="../../data", **configured)
     assert settings.data_dir == "../../data"
+
+
+def test_the_stub_app_should_not_import_local_clients() -> None:
+    # Given
+    sys.modules.pop("docling", None)
+    sys.modules.pop("qdrant_client", None)
+
+    # When
+    import health_api.main as main
+
+    importlib.reload(main)
+    main.create_app()
+
+    # Then
+    assert "docling" not in sys.modules
+    assert "qdrant_client" not in sys.modules
