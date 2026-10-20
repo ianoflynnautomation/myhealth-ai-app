@@ -502,14 +502,16 @@ make check
 
 **Description:** The default profile starts with no Ollama, Qdrant, or data directory settings.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `Settings(profile="stub")` succeeds when those values are unset.
+- [x] `Settings(profile="stub")` succeeds when those values are unset.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_stub_settings_need_no_service_urls -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_config.py::test_stub_settings_should_need_no_service_urls -q`
+- [x] `make check`
 
 **Dependencies:** Checkpoint A
 
@@ -524,14 +526,16 @@ make check
 
 **Description:** Local mode fails before listen when Qdrant is not configured. Other local fields may still be optional after this task.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `profile="local"` with no `qdrant_url` raises, and the error names `qdrant_url`.
+- [x] `profile="local"` with no `qdrant_url` raises, and the error names `qdrant_url`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_require_qdrant_url -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_should_require_qdrant_url -q`
+- [x] `make check`
 
 **Dependencies:** Task 19
 
@@ -546,14 +550,16 @@ make check
 
 **Description:** Add the Ollama URL as a required local setting.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `profile="local"` with a Qdrant URL and no `ollama_base_url` raises, and the error names `ollama_base_url`.
+- [x] `profile="local"` with a Qdrant URL and no `ollama_base_url` raises, and the error names `ollama_base_url`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_require_ollama_base_url -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_should_require_ollama_base_url -q`
+- [x] `make check`
 
 **Dependencies:** Task 20
 
@@ -568,14 +574,16 @@ make check
 
 **Description:** Add the chat model name as a required local setting.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] A local configuration with no `ollama_chat_model` raises, and the error names `ollama_chat_model`.
+- [x] A local configuration with no `ollama_chat_model` raises, and the error names `ollama_chat_model`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_require_chat_model -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_should_require_a_chat_model -q`
+- [x] `make check`
 
 **Dependencies:** Task 21
 
@@ -590,14 +598,16 @@ make check
 
 **Description:** Add the embedding model name as a required local setting.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] A local configuration with no `ollama_embed_model` raises, and the error names `ollama_embed_model`.
+- [x] A local configuration with no `ollama_embed_model` raises, and the error names `ollama_embed_model`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_require_embed_model -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_should_require_an_embed_model -q`
+- [x] `make check`
 
 **Dependencies:** Task 22
 
@@ -612,14 +622,16 @@ make check
 
 **Description:** Add the PDF directory as a required local setting.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] A local configuration with no `data_dir` raises, and the error names `data_dir`.
+- [x] A local configuration with no `data_dir` raises, and the error names `data_dir`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_require_data_dir -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_should_require_a_data_dir -q`
+- [x] `make check`
 
 **Dependencies:** Task 23
 
@@ -634,14 +646,16 @@ make check
 
 **Description:** Building the stub app must not load Docling or the Qdrant client.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] Importing `create_app` and building a stub app leaves `docling` and `qdrant_client` out of `sys.modules`.
+- [x] Importing `create_app` and building a stub app leaves `docling` and `qdrant_client` out of `sys.modules`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_stub_app_does_not_import_local_clients -q`
-- [ ] `make check`
+- [x] The named test passed on the first run: `uv run pytest tests/test_config.py::test_the_stub_app_should_not_import_local_clients -q`. The stub app does not import those modules, so no production change.
+- [x] `make check`
 
 **Dependencies:** Task 19
 
