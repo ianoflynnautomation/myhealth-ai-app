@@ -50,9 +50,11 @@ class ChatRequest(BaseModel):
     messages: list[ChatMessage]
 
     @model_validator(mode="after")
-    def at_least_one_message(self) -> Self:
+    def validate_messages(self) -> Self:
         if not self.messages:
             raise ValueError("At least one message is required.")
+        if self.messages[-1].role != "user":
+            raise ValueError("Last message must be from the user.")
         return self
 
 

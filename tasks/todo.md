@@ -446,14 +446,16 @@ make check
 
 **Description:** The question has to be the last message.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] A body whose last message has role `assistant` returns 422 and `VALIDATION_ERROR`.
+- [x] A body whose last message has role `assistant` returns 422 and `VALIDATION_ERROR`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_assistant_last_message_is_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_an_assistant_last_message_should_return_validation_error -q`
+- [x] `make check`
 
 **Dependencies:** Task 14
 

@@ -170,3 +170,24 @@ def test_an_unknown_chat_field_should_return_validation_error() -> None:
             "details": {},
         }
     }
+
+
+def test_an_assistant_last_message_should_return_validation_error() -> None:
+    # Given
+    client = TestClient(create_app(chat_enabled=True))
+
+    # When
+    response = client.post(
+        "/chat",
+        json={"messages": [{"role": "assistant", "content": "hello"}]},
+    )
+
+    # Then
+    assert response.status_code == 422
+    assert response.json() == {
+        "error": {
+            "code": "VALIDATION_ERROR",
+            "message": "Last message must be from the user.",
+            "details": {},
+        }
+    }
