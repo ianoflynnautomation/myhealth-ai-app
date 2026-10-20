@@ -1,3 +1,4 @@
+import sys
 from collections.abc import Sequence
 
 import pytest
@@ -8,8 +9,6 @@ from health_api.documents.memory_corpus import StoredChunk, StoredDocument
 from health_api.documents.text_layer_parser import ParsedPage
 from health_api.http.chat import CitationResponse
 from health_api.main import create_app
-
-pytestmark = pytest.mark.acceptance
 
 
 def _local_settings() -> Settings:
@@ -72,6 +71,7 @@ class _ChatModel:
         return "cited answer"
 
 
+@pytest.mark.acceptance
 def test_the_local_factory_should_use_injected_adapters() -> None:
     # Given
     settings = _local_settings()
@@ -123,3 +123,18 @@ def test_the_local_factory_should_use_injected_adapters() -> None:
     assert corpus.queries == ["What is the DemoMarker value?"]
     assert chat_model.queries == ["What is the DemoMarker value?"]
     assert chat_model.contents == ["DemoMarker value is 10 units."]
+
+
+@pytest.mark.unit
+def test_a_missing_local_install_should_name_the_sync_command() -> None:
+    # Given
+    sys.modules.pop("docling", None)
+    sys.modules.pop("qdrant_client", None)
+
+    # When
+    with pytest.raises(RuntimeError, match="uv sync --group local"):
+        create_app(_local_settings())
+
+    # Then
+    assert "docling" not in sys.modules
+    assert "qdrant_client" not in sys.modules

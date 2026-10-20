@@ -1,3 +1,4 @@
+import importlib
 import os
 from collections.abc import Callable
 
@@ -26,6 +27,7 @@ def create_app(
     chat_model: ChatModel | None
     if settings.profile == "local":
         if parser_factory is None or corpus_factory is None or chat_model_factory is None:
+            _require_local_group()
             raise RuntimeError("local adapters are required")
         parser = parser_factory(settings)
         active_corpus = corpus_factory(settings)
@@ -46,6 +48,34 @@ def create_app(
     return app
 
 
+def _require_local_group() -> None:
+    missing: list[str] = []
+    for module in ("docling", "qdrant_client"):
+        try:
+            importlib.import_module(module)
+        except ImportError:
+            missing.append(module)
+    if missing:
+        names = ", ".join(missing)
+        raise RuntimeError(
+            f"{names} is not installed. Install the local group with `uv sync --group local`."
+        )
+
+
+def _settings_from_env() -> Settings:
+    raw = os.environ.get("PROFILE")
+    if raw is None or raw.strip().lower() != "local":
+        return Settings()
+    return Settings(
+        profile="local",
+        qdrant_url=os.environ.get("QDRANT_URL"),
+        ollama_base_url=os.environ.get("OLLAMA_BASE_URL"),
+        ollama_chat_model=os.environ.get("OLLAMA_CHAT_MODEL"),
+        ollama_embed_model=os.environ.get("OLLAMA_EMBED_MODEL"),
+        data_dir=os.environ.get("DATA_DIR"),
+    )
+
+
 def _enabled_from_env(name: str, *, default: bool) -> bool:
     raw = os.environ.get(name)
     if raw is None or raw.strip() == "":
@@ -54,6 +84,7 @@ def _enabled_from_env(name: str, *, default: bool) -> bool:
 
 
 app = create_app(
+    _settings_from_env(),
     documents_enabled=_enabled_from_env("DOCUMENTS_ENABLED", default=True),
     chat_enabled=_enabled_from_env("CHAT_ENABLED", default=True),
 )
