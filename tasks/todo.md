@@ -323,15 +323,17 @@ make check
 
 **Description:** The stub profile refuses a scan by refusing an empty text layer.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] An empty text layer returns 422 and `VALIDATION_ERROR`.
-- [ ] `GET /documents` does not list that file.
+- [x] An empty text layer returns 422 and `VALIDATION_ERROR`.
+- [x] `GET /documents` does not list that file.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_documents.py::test_pdf_with_no_text_is_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_documents.py::test_a_pdf_with_no_text_should_return_validation_error -q`
+- [x] `make check`
 
 **Dependencies:** Task 11
 

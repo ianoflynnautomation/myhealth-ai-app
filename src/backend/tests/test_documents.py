@@ -14,6 +14,12 @@ def _fixture_pdf() -> bytes:
     return bytes(pdf.output())
 
 
+def _blank_pdf() -> bytes:
+    pdf = FPDF()
+    pdf.add_page()
+    return bytes(pdf.output())
+
+
 def test_document_upload_is_off_unless_enabled() -> None:
     response = TestClient(create_app()).post("/documents")
 
@@ -74,6 +80,28 @@ def test_a_non_pdf_upload_should_return_unsupported_media_type() -> None:
         "error": {
             "code": "UNSUPPORTED_MEDIA_TYPE",
             "message": "Upload must be a PDF.",
+            "details": {},
+        }
+    }
+    assert client.get("/documents").json() == {"documents": []}
+
+
+def test_a_pdf_with_no_text_should_return_validation_error() -> None:
+    # Given
+    client = TestClient(create_app(documents_enabled=True))
+
+    # When
+    response = client.post(
+        "/documents",
+        files={"file": ("scan.pdf", _blank_pdf(), "application/pdf")},
+    )
+
+    # Then
+    assert response.status_code == 422
+    assert response.json() == {
+        "error": {
+            "code": "VALIDATION_ERROR",
+            "message": "PDF has no text layer.",
             "details": {},
         }
     }

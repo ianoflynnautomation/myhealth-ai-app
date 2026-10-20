@@ -44,6 +44,8 @@ def register_documents(app: FastAPI, corpus: MemoryCorpus) -> None:
         if not data.startswith(b"%PDF"):
             raise ApiError(415, "UNSUPPORTED_MEDIA_TYPE", "Upload must be a PDF.")
         pages = parse_text_layer(data)
+        if not any(page.text.strip() for page in pages):
+            raise ApiError(422, "VALIDATION_ERROR", "PDF has no text layer.")
         stored, created = corpus.add(
             document_id=hashlib.sha256(data).hexdigest(),
             source_file=file.filename or "upload.pdf",
