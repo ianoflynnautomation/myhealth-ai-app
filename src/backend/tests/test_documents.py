@@ -24,9 +24,41 @@ def _blank_pdf() -> bytes:
 
 
 def test_document_upload_is_off_unless_enabled() -> None:
-    response = TestClient(create_app()).post("/documents")
+    response = TestClient(create_app(documents_enabled=False)).post("/documents")
 
     assert response.status_code == 404
+
+
+def test_the_stub_app_should_store_a_pdf_by_default() -> None:
+    # Given
+    pdf = _fixture_pdf()
+
+    # When
+    response = TestClient(create_app()).post(
+        "/documents",
+        files={"file": ("example.pdf", pdf, "application/pdf")},
+    )
+
+    # Then
+    assert response.status_code == 201
+
+
+def test_the_dev_app_should_expose_document_upload() -> None:
+    # Given
+    from health_api.main import app
+
+    pdf = _fixture_pdf()
+    client = TestClient(app)
+
+    # When
+    uploaded = client.post(
+        "/documents",
+        files={"file": ("example.pdf", pdf, "application/pdf")},
+    )
+
+    # Then
+    assert uploaded.status_code == 201
+    assert client.post("/chat").status_code == 404
 
 
 def test_post_document_stores_pdf() -> None:

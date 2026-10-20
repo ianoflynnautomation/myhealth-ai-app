@@ -99,7 +99,7 @@ PROFILE=local \
 
 The process refuses to start when `PROFILE=local` and any of those variables is missing, or when the local dependency group is not installed. In stub mode it does not read the service URLs and does not open a connection to those hosts.
 
-`GET /health` is always registered. `POST /documents` is registered only when `documents_enabled` is true. `POST /chat` is registered only when `chat_enabled` is true, once that route exists. The module-level app reads `DOCUMENTS_ENABLED` and `CHAT_ENABLED` from the environment. A value of `1`, `true`, or `yes` turns that route on. The default is off, so `make dev` does not expose a route whose behavior is still short of this spec. Tests opt in with `create_app(documents_enabled=True)` or `create_app(chat_enabled=True)`. The stub profile turns `documents_enabled` on by default after bad uploads are rejected, and `chat_enabled` on by default after bad chat bodies are rejected.
+`GET /health` is always registered. `POST /documents` is registered only when `documents_enabled` is true. `POST /chat` is registered only when `chat_enabled` is true. The module-level app reads `DOCUMENTS_ENABLED` and `CHAT_ENABLED` from the environment. `1`, `true`, or `yes` turns a route on. Any other set value turns it off. An unset variable uses the stub default: documents on, chat off. `create_app(documents_enabled=False)` leaves upload off. Chat turns on by default after bad chat bodies are rejected.
 
 ## Project structure
 
@@ -341,7 +341,7 @@ Never:
 
 1. `make check` passes in `src/backend` after `uv sync`, with no Docker daemon and without the local dependency group.
 2. The acceptance flow above passes against `PROFILE=stub`.
-3. With `DOCUMENTS_ENABLED=1` and `CHAT_ENABLED=1`, `make dev` serves the three routes on `127.0.0.1:8000` in stub mode, and an uploaded text-layer PDF is still cited by a later question in that same process. Before those flags default on, the routes stay off unless the test or the environment opts in.
+3. `make dev` serves health and document upload on `127.0.0.1:8000` in stub mode. `CHAT_ENABLED=1` adds chat, and an uploaded text-layer PDF is still cited by a later question in that same process. Until chat defaults on, that route stays off unless the test or the environment opts in.
 4. `PROFILE=local` wires Docling, the `data/` directory, Qdrant, and Ollama. Missing config, or a missing local group, refuses to start. Mocked client tests cover parse, upsert, and the grounded chat call.
 5. `docs/capability-map.md` and this file are in the repo.
 6. `docs/architecture.md` describes this pipeline and a Python backend. It no longer says the backend is Java or TypeScript.

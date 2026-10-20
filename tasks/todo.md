@@ -11,7 +11,7 @@ One pull request is one slice from the table below. Finish that branch and merge
 | 1 | `feature/app-shell` | 1–4 | `DOCUMENTS_ENABLED` defaults off. Health is always on. |
 | 2 | `feature/list-stored-pdf` | 5–6 | Same flag, still off. |
 | 3 | `feature/cite-stored-page` | 7–10 | `CHAT_ENABLED` defaults off. |
-| 4 | `feature/reject-bad-uploads` | 11–12 | Turn `DOCUMENTS_ENABLED` on for the stub profile at the end of this PR. Upload then matches the spec. |
+| 4 | `feature/reject-bad-uploads` | 11–12 | `DOCUMENTS_ENABLED` defaults on. `CHAT_ENABLED` stays off. |
 | 5 | `feature/reject-bad-chat` | 13–18 | Turn `CHAT_ENABLED` on for the stub profile at the end of this PR. |
 | 6 | `feature/local-settings` | 19–25 | `PROFILE=local` is the opt-in. No extra flag. |
 | 7 | `feature/docling-parser` | 26–27 | Used only when `PROFILE=local`. |
