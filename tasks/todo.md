@@ -822,14 +822,16 @@ make check
 
 **Description:** The answer shown to the caller is the text from the model response.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] When the fake response content is `cited answer`, `answer(...)` returns `cited answer`.
+- [x] When the fake response content is `cited answer`, `answer(...)` returns `cited answer`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_ollama_chat.py::test_ollama_returns_model_text -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_ollama_chat.py::test_ollama_should_return_the_model_text -q`
+- [x] `make check`
 
 **Dependencies:** Task 31
 

@@ -22,11 +22,14 @@ class OllamaChatModel:
     async def answer(self, query: str, citations: list[Citation]) -> str:
         content = "\n".join([query, *(citation.content for citation in citations)])
         async with httpx.AsyncClient(transport=self._transport) as client:
-            await client.post(
+            response = await client.post(
                 f"{self._base_url.rstrip('/')}/chat/completions",
                 json={
                     "model": self._model,
                     "messages": [{"role": "user", "content": content}],
                 },
             )
-        return ""
+        text = response.json()["choices"][0]["message"]["content"]
+        if not isinstance(text, str):
+            raise TypeError("Ollama content must be text")
+        return text

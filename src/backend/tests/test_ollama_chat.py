@@ -10,6 +10,11 @@ pytestmark = pytest.mark.unit
 
 OLLAMA_BASE_URL = "http://127.0.0.1:11434/v1"
 OLLAMA_CHAT_MODEL = "llama3.1"
+_MODEL_TEXT = "cited answer"
+
+
+def _response(content: str = _MODEL_TEXT) -> httpx.Response:
+    return httpx.Response(200, json={"choices": [{"message": {"content": content}}]})
 
 
 def test_ollama_should_post_to_the_configured_model() -> None:
@@ -18,7 +23,7 @@ def test_ollama_should_post_to_the_configured_model() -> None:
 
     def handler(request: httpx.Request) -> httpx.Response:
         seen.append(request)
-        return httpx.Response(200, json={})
+        return _response()
 
     model = OllamaChatModel(
         base_url=OLLAMA_BASE_URL,
@@ -46,7 +51,7 @@ def test_the_ollama_prompt_should_contain_citations_only() -> None:
 
     def handler(request: httpx.Request) -> httpx.Response:
         seen.append(request)
-        return httpx.Response(200, json={})
+        return _response()
 
     model = OllamaChatModel(
         base_url=OLLAMA_BASE_URL,
@@ -62,3 +67,21 @@ def test_the_ollama_prompt_should_contain_citations_only() -> None:
     assert "DemoMarker value is 10 units." in body
     assert "Second page marker is 4." in body
     assert pdf.decode() not in body
+
+
+def test_ollama_should_return_the_model_text() -> None:
+    # Given
+    def handler(_request: httpx.Request) -> httpx.Response:
+        return _response()
+
+    model = OllamaChatModel(
+        base_url=OLLAMA_BASE_URL,
+        model=OLLAMA_CHAT_MODEL,
+        transport=httpx.MockTransport(handler),
+    )
+
+    # When
+    text = asyncio.run(model.answer("What is the DemoMarker value?", []))
+
+    # Then
+    assert text == "cited answer"
