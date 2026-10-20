@@ -374,14 +374,16 @@ make check
 
 **Description:** A chat body must contain at least one message.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `{"messages": []}` returns 422 and `VALIDATION_ERROR`.
+- [x] `{"messages": []}` returns 422 and `VALIDATION_ERROR`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_empty_messages_are_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_empty_messages_should_return_validation_error -q`
+- [x] `make check`
 
 **Dependencies:** Task 13
 

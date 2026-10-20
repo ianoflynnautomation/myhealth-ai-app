@@ -1,9 +1,24 @@
+from typing import Self
+
 from fastapi import Depends, FastAPI, Request
-from pydantic import BaseModel, Field
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field, model_validator
 
 from health_api.chat.quoting_chat_model import quote
 from health_api.documents.memory_corpus import MemoryCorpus
 from health_api.http.errors import ApiError, register_error_handler
+
+
+def _validation_message(exc: RequestValidationError) -> str:
+    errors = exc.errors()
+    if not errors:
+        return "Request is invalid."
+    message = str(errors[0]["msg"])
+    prefix = "Value error, "
+    if message.startswith(prefix):
+        return message.removeprefix(prefix)
+    return message
 
 
 def _require_json(request: Request) -> None:
@@ -23,6 +38,12 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     messages: list[ChatMessage]
 
+    @model_validator(mode="after")
+    def at_least_one_message(self) -> Self:
+        if not self.messages:
+            raise ValueError("At least one message is required.")
+        return self
+
 
 class CitationResponse(BaseModel):
     id: str
@@ -38,6 +59,19 @@ class ChatResponse(BaseModel):
 
 def register_chat(app: FastAPI, corpus: MemoryCorpus) -> None:
     register_error_handler(app)
+
+    @app.exception_handler(RequestValidationError)
+    async def handle_validation(_request: Request, exc: RequestValidationError) -> JSONResponse:
+        return JSONResponse(
+            status_code=422,
+            content={
+                "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": _validation_message(exc),
+                    "details": {},
+                }
+            },
+        )
 
     @app.post("/chat")
     def chat(body: ChatRequest, _: None = _JSON) -> ChatResponse:

@@ -110,3 +110,21 @@ def test_a_non_json_chat_body_should_return_unsupported_media_type() -> None:
             "details": {},
         }
     }
+
+
+def test_empty_messages_should_return_validation_error() -> None:
+    # Given
+    client = TestClient(create_app(chat_enabled=True))
+
+    # When
+    response = client.post("/chat", json={"messages": []})
+
+    # Then
+    assert response.status_code == 422
+    assert response.json() == {
+        "error": {
+            "code": "VALIDATION_ERROR",
+            "message": "At least one message is required.",
+            "details": {},
+        }
+    }
