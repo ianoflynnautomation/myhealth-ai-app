@@ -7,9 +7,14 @@ from health_api.http.chat import register_chat
 from health_api.http.documents import register_documents
 
 
-def create_app(*, documents_enabled: bool = True, chat_enabled: bool = False) -> FastAPI:
+def create_app(
+    *,
+    documents_enabled: bool = True,
+    chat_enabled: bool = False,
+    corpus: MemoryCorpus | None = None,
+) -> FastAPI:
     app = FastAPI()
-    corpus = MemoryCorpus()
+    corpus = MemoryCorpus() if corpus is None else corpus
 
     @app.get("/health")
     def health() -> dict[str, str]:

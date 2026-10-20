@@ -470,14 +470,16 @@ make check
 
 **Description:** An unexpected failure returns the fixed 500 body. `create_app` takes a corpus override so the test can raise without a new route.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] When the corpus raises, `POST /chat` returns 500, `code` is `INTERNAL_ERROR`, and the body has no traceback and no exception text.
+- [x] When the corpus raises, `POST /chat` returns 500, `code` is `INTERNAL_ERROR`, and the body has no traceback and no exception text.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_server_error_hides_traceback -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_a_server_error_should_hide_the_traceback -q`
+- [x] `make check`
 
 **Dependencies:** Task 8
 

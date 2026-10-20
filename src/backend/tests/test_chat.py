@@ -4,6 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 from fpdf import FPDF
 
+from health_api.documents.memory_corpus import MemoryCorpus, StoredChunk
 from health_api.main import create_app
 
 pytestmark = pytest.mark.acceptance
@@ -191,3 +192,34 @@ def test_an_assistant_last_message_should_return_validation_error() -> None:
             "details": {},
         }
     }
+
+
+class _RaisingCorpus(MemoryCorpus):
+    def search(self, query: str) -> list[StoredChunk]:
+        raise RuntimeError("secret boom")
+
+
+def test_a_server_error_should_hide_the_traceback() -> None:
+    # Given
+    client = TestClient(
+        create_app(chat_enabled=True, corpus=_RaisingCorpus()),
+        raise_server_exceptions=False,
+    )
+
+    # When
+    response = client.post(
+        "/chat",
+        json={"messages": [{"role": "user", "content": "hello"}]},
+    )
+
+    # Then
+    assert response.status_code == 500
+    assert response.json() == {
+        "error": {
+            "code": "INTERNAL_ERROR",
+            "message": "Internal server error.",
+            "details": {},
+        }
+    }
+    assert "secret boom" not in response.text
+    assert "Traceback" not in response.text
