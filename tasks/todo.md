@@ -196,15 +196,17 @@ make check
 
 **Description:** In-memory search is token overlap. This task does not add a route.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] Searching for `DemoMarker` returns the stored page's text, file name, and page number 1.
-- [ ] A query whose words are absent returns no pages.
+- [x] Searching for `DemoMarker` returns the stored page's text, file name, and page number 1.
+- [x] A query whose words are absent returns no pages.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_memory_corpus.py::test_search_returns_matching_page -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_memory_corpus.py::test_search_should_return_the_page_with_the_question_words -q`
+- [x] `make check`
 
 **Dependencies:** Task 4
 
@@ -219,16 +221,18 @@ make check
 
 **Description:** The chat route searches the store and quotes the top page.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `POST /chat` with `What is the DemoMarker value?` returns 200.
-- [ ] `citations[0]` has `content` `DemoMarker value is 10 units.`, `sourcePage` 1, `sourceFile` of the upload, and `id` `<document id>:1`.
-- [ ] `outputText` equals that content.
+- [x] `POST /chat` with `What is the DemoMarker value?` returns 200.
+- [x] `citations[0]` has `content` `DemoMarker value is 10 units.`, `sourcePage` 1, `sourceFile` of the upload, and `id` `<document id>:1`.
+- [x] `outputText` equals that content.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_question_cites_stored_page -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_chat_should_cite_the_stored_page -q`
+- [x] `make check`
 
 **Dependencies:** Task 7
 
@@ -245,14 +249,16 @@ make check
 
 **Description:** A new app must not invent a citation.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `POST /chat` returns 200, `citations` is `[]`, and `outputText` is `No stored document answers that.`
+- [x] `POST /chat` returns 200, `citations` is `[]`, and `outputText` is `No stored document answers that.`
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_empty_store_returns_fixed_sentence -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_an_empty_store_should_return_the_fixed_sentence -q`
+- [x] `make check`
 
 **Dependencies:** Task 8
 
@@ -267,14 +273,16 @@ make check
 
 **Description:** Stored text that does not share words with the question is not a citation.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] After storing the fixture PDF, a question with none of its words returns 200, `citations` `[]`, and `outputText` `No stored document answers that.`
+- [x] After storing the fixture PDF, a question with none of its words returns 200, `citations` `[]`, and `outputText` `No stored document answers that.`
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_unmatched_question_returns_fixed_sentence -q`
-- [ ] `make check`
+- [x] The named test passed on the first run: `uv run pytest tests/test_chat.py::test_an_unmatched_question_should_return_the_fixed_sentence -q`. Search already drops a page with no shared words, and an empty citation list already returns the fixed sentence.
+- [x] `make check`
 
 **Dependencies:** Task 9
 
