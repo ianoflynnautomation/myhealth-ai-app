@@ -88,3 +88,25 @@ def test_an_unmatched_question_should_return_the_fixed_sentence() -> None:
         "outputText": "No stored document answers that.",
         "citations": [],
     }
+
+
+def test_a_non_json_chat_body_should_return_unsupported_media_type() -> None:
+    # Given
+    client = TestClient(create_app(chat_enabled=True))
+
+    # When
+    response = client.post(
+        "/chat",
+        content=b"hello",
+        headers={"content-type": "text/plain"},
+    )
+
+    # Then
+    assert response.status_code == 415
+    assert response.json() == {
+        "error": {
+            "code": "UNSUPPORTED_MEDIA_TYPE",
+            "message": "Chat body must be JSON.",
+            "details": {},
+        }
+    }

@@ -349,14 +349,16 @@ make check
 
 **Description:** Chat only accepts JSON.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `POST /chat` with `Content-Type: text/plain` returns 415 and `UNSUPPORTED_MEDIA_TYPE`.
+- [x] `POST /chat` with `Content-Type: text/plain` returns 415 and `UNSUPPORTED_MEDIA_TYPE`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_non_json_chat_is_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_a_non_json_chat_body_should_return_unsupported_media_type -q`
+- [x] `make check`
 
 **Dependencies:** Task 8
 
