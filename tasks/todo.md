@@ -722,6 +722,8 @@ make check
 
 **Description:** Given pages and vectors, the corpus records one point each. The test passes a fake client and does not import `qdrant_client` or open a port.
 
+**Status:** done
+
 **Acceptance criteria:**
 
 - [x] Two pages produce two upserts, ids `<document id>:1` and `<document id>:2`.
@@ -746,14 +748,16 @@ make check
 
 **Description:** A second add of the same document id replaces the points instead of inserting another pair.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] After two adds of the same id and the same two pages, the fake client holds two points, not four.
+- [x] After two adds of the same id and the same two pages, the fake client holds two points, not four.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_qdrant_corpus.py::test_qdrant_corpus_does_not_duplicate_document -q`
-- [ ] `make check`
+- [x] The named test passed on the first run: `uv run pytest tests/test_qdrant_corpus.py::test_the_same_document_should_not_upsert_twice -q`. Point ids are `<document id>:<page>`, and the fake client replaces a point with the same id, so a second add stays at two points. No production change.
+- [x] `make check`
 
 **Dependencies:** Task 28
 

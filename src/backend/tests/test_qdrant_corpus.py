@@ -51,3 +51,35 @@ def test_qdrant_corpus_should_upsert_one_point_per_page() -> None:
         "content": "beta",
     }
     assert "qdrant_client" not in sys.modules
+
+
+def test_the_same_document_should_not_upsert_twice() -> None:
+    # Given
+    client = _FakeClient()
+    corpus = QdrantCorpus(client)
+    pages = [
+        ParsedPage(page_number=1, text="alpha"),
+        ParsedPage(page_number=2, text="beta"),
+    ]
+    vectors = [[0.1, 0.2], [0.3, 0.4]]
+
+    # When
+    asyncio.run(
+        corpus.add(
+            document_id="doc-1",
+            source_file="example.pdf",
+            pages=pages,
+            vectors=vectors,
+        )
+    )
+    asyncio.run(
+        corpus.add(
+            document_id="doc-1",
+            source_file="example.pdf",
+            pages=pages,
+            vectors=vectors,
+        )
+    )
+
+    # Then
+    assert set(client.points) == {"doc-1:1", "doc-1:2"}
