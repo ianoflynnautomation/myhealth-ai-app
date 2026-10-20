@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 from health_api.documents.memory_corpus import MemoryCorpus
 from health_api.documents.text_layer_parser import parse_text_layer
+from health_api.http.errors import ApiError, register_error_handler
 
 _UPLOAD = File()
 
@@ -21,6 +22,8 @@ class DocumentListResponse(BaseModel):
 
 
 def register_documents(app: FastAPI, corpus: MemoryCorpus) -> None:
+    register_error_handler(app)
+
     @app.get("/documents")
     def list_documents() -> DocumentListResponse:
         return DocumentListResponse(
@@ -38,6 +41,8 @@ def register_documents(app: FastAPI, corpus: MemoryCorpus) -> None:
     @app.post("/documents", status_code=201)
     async def upload_document(response: Response, file: UploadFile = _UPLOAD) -> DocumentResponse:
         data = await file.read()
+        if not data.startswith(b"%PDF"):
+            raise ApiError(415, "UNSUPPORTED_MEDIA_TYPE", "Upload must be a PDF.")
         pages = parse_text_layer(data)
         stored, created = corpus.add(
             document_id=hashlib.sha256(data).hexdigest(),

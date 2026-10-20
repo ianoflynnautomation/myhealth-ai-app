@@ -297,15 +297,17 @@ make check
 
 **Description:** The first error response uses the spec error body. The file is not stored.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] Uploading `notes.txt` returns 415 and `{"error": {"code": "UNSUPPORTED_MEDIA_TYPE", ...}}`.
-- [ ] `GET /documents` does not list it.
+- [x] Uploading `notes.txt` returns 415 and `{"error": {"code": "UNSUPPORTED_MEDIA_TYPE", ...}}`.
+- [x] `GET /documents` does not list it.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_documents.py::test_non_pdf_upload_is_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_documents.py::test_a_non_pdf_upload_should_return_unsupported_media_type -q`
+- [x] `make check`
 
 **Dependencies:** Task 5
 

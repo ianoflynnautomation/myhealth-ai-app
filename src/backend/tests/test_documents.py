@@ -58,6 +58,28 @@ def test_get_documents_lists_file() -> None:
     }
 
 
+def test_a_non_pdf_upload_should_return_unsupported_media_type() -> None:
+    # Given
+    client = TestClient(create_app(documents_enabled=True))
+
+    # When
+    response = client.post(
+        "/documents",
+        files={"file": ("notes.txt", b"hello", "text/plain")},
+    )
+
+    # Then
+    assert response.status_code == 415
+    assert response.json() == {
+        "error": {
+            "code": "UNSUPPORTED_MEDIA_TYPE",
+            "message": "Upload must be a PDF.",
+            "details": {},
+        }
+    }
+    assert client.get("/documents").json() == {"documents": []}
+
+
 def test_same_bytes_return_existing_document() -> None:
     pdf = _fixture_pdf()
     client = TestClient(create_app(documents_enabled=True))
