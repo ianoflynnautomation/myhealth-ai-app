@@ -34,3 +34,17 @@ def test_local_settings_should_require_ollama_base_url() -> None:
         Settings(profile="local", qdrant_url="http://127.0.0.1:6333")
 
     # Then
+
+
+def test_local_settings_should_require_a_chat_model() -> None:
+    # Given
+
+    # When
+    with pytest.raises(ValidationError, match="ollama_chat_model"):
+        Settings(
+            profile="local",
+            qdrant_url="http://127.0.0.1:6333",
+            ollama_base_url="http://127.0.0.1:11434/v1",
+        )
+
+    # Then

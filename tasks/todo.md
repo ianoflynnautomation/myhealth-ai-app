@@ -574,14 +574,16 @@ make check
 
 **Description:** Add the chat model name as a required local setting.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] A local configuration with no `ollama_chat_model` raises, and the error names `ollama_chat_model`.
+- [x] A local configuration with no `ollama_chat_model` raises, and the error names `ollama_chat_model`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_require_chat_model -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_should_require_a_chat_model -q`
+- [x] `make check`
 
 **Dependencies:** Task 21
 
