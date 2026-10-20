@@ -526,14 +526,16 @@ make check
 
 **Description:** Local mode fails before listen when Qdrant is not configured. Other local fields may still be optional after this task.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `profile="local"` with no `qdrant_url` raises, and the error names `qdrant_url`.
+- [x] `profile="local"` with no `qdrant_url` raises, and the error names `qdrant_url`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_require_qdrant_url -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_should_require_qdrant_url -q`
+- [x] `make check`
 
 **Dependencies:** Task 19
 

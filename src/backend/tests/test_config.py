@@ -1,4 +1,5 @@
 import pytest
+from pydantic import ValidationError
 
 from health_api.config import Settings
 
@@ -13,3 +14,13 @@ def test_stub_settings_should_need_no_service_urls() -> None:
 
     # Then
     assert settings.profile == "stub"
+
+
+def test_local_settings_should_require_qdrant_url() -> None:
+    # Given
+
+    # When
+    with pytest.raises(ValidationError, match="qdrant_url"):
+        Settings(profile="local")
+
+    # Then
