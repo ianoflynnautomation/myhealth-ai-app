@@ -10,6 +10,11 @@ class ParsedPage:
     text: str
 
 
+class TextLayerParser:
+    async def parse(self, *, file_name: str, data: bytes) -> list[ParsedPage]:
+        return parse_text_layer(data)
+
+
 def parse_text_layer(data: bytes) -> list[ParsedPage]:
     reader = PdfReader(BytesIO(data))
     return [
