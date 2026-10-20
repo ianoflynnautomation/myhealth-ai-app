@@ -48,3 +48,18 @@ def test_local_settings_should_require_a_chat_model() -> None:
         )
 
     # Then
+
+
+def test_local_settings_should_require_an_embed_model() -> None:
+    # Given
+
+    # When
+    with pytest.raises(ValidationError, match="ollama_embed_model"):
+        Settings(
+            profile="local",
+            qdrant_url="http://127.0.0.1:6333",
+            ollama_base_url="http://127.0.0.1:11434/v1",
+            ollama_chat_model="llama3.1",
+        )
+
+    # Then

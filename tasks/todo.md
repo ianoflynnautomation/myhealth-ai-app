@@ -598,14 +598,16 @@ make check
 
 **Description:** Add the embedding model name as a required local setting.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] A local configuration with no `ollama_embed_model` raises, and the error names `ollama_embed_model`.
+- [x] A local configuration with no `ollama_embed_model` raises, and the error names `ollama_embed_model`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_require_embed_model -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_should_require_an_embed_model -q`
+- [x] `make check`
 
 **Dependencies:** Task 22
 
