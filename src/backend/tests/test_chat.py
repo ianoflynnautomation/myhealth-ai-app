@@ -149,3 +149,24 @@ def test_blank_content_should_return_validation_error() -> None:
             "details": {},
         }
     }
+
+
+def test_an_unknown_chat_field_should_return_validation_error() -> None:
+    # Given
+    client = TestClient(create_app(chat_enabled=True))
+
+    # When
+    response = client.post(
+        "/chat",
+        json={"messages": [{"role": "user", "content": "hello"}], "extra": True},
+    )
+
+    # Then
+    assert response.status_code == 422
+    assert response.json() == {
+        "error": {
+            "code": "VALIDATION_ERROR",
+            "message": "Unknown field.",
+            "details": {},
+        }
+    }

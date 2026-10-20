@@ -422,14 +422,16 @@ make check
 
 **Description:** Extra JSON fields are rejected so a typo is not ignored.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] A valid message plus `"extra": true` returns 422 and `VALIDATION_ERROR`.
+- [x] A valid message plus `"extra": true` returns 422 and `VALIDATION_ERROR`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_unknown_chat_field_is_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_an_unknown_chat_field_should_return_validation_error -q`
+- [x] `make check`
 
 **Dependencies:** Task 14
 

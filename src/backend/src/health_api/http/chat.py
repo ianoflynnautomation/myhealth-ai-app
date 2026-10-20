@@ -3,7 +3,7 @@ from typing import Self
 from fastapi import Depends, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from health_api.chat.quoting_chat_model import quote
 from health_api.documents.memory_corpus import MemoryCorpus
@@ -14,6 +14,8 @@ def _validation_message(exc: RequestValidationError) -> str:
     errors = exc.errors()
     if not errors:
         return "Request is invalid."
+    if errors[0].get("type") == "extra_forbidden":
+        return "Unknown field."
     message = str(errors[0]["msg"])
     prefix = "Value error, "
     if message.startswith(prefix):
@@ -43,6 +45,8 @@ class ChatMessage(BaseModel):
 
 
 class ChatRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     messages: list[ChatMessage]
 
     @model_validator(mode="after")
