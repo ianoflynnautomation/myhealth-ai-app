@@ -4,7 +4,7 @@ import json
 import httpx
 import pytest
 
-from health_api.chat.ollama_chat_model import OllamaChatModel
+from health_api.chat.ollama_chat_model import Citation, OllamaChatModel
 
 pytestmark = pytest.mark.unit
 
@@ -33,3 +33,32 @@ def test_ollama_should_post_to_the_configured_model() -> None:
     assert len(seen) == 1
     assert str(seen[0].url).startswith(OLLAMA_BASE_URL)
     assert json.loads(seen[0].content)["model"] == OLLAMA_CHAT_MODEL
+
+
+def test_the_ollama_prompt_should_contain_citations_only() -> None:
+    # Given
+    pdf = b"%PDF-1.7 synthetic-bytes"
+    citations = [
+        Citation(content="DemoMarker value is 10 units."),
+        Citation(content="Second page marker is 4."),
+    ]
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={})
+
+    model = OllamaChatModel(
+        base_url=OLLAMA_BASE_URL,
+        model=OLLAMA_CHAT_MODEL,
+        transport=httpx.MockTransport(handler),
+    )
+
+    # When
+    asyncio.run(model.answer("What is the DemoMarker value?", citations))
+
+    # Then
+    body = seen[0].content.decode()
+    assert "DemoMarker value is 10 units." in body
+    assert "Second page marker is 4." in body
+    assert pdf.decode() not in body

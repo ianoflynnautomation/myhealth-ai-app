@@ -797,15 +797,17 @@ make check
 
 **Description:** The request carries the retrieved page text. It does not carry the original PDF bytes.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] The recorded body includes each citation's `content`.
-- [ ] The recorded body does not include a sample PDF byte string passed beside the citations.
+- [x] The recorded body includes each citation's `content`.
+- [x] The recorded body does not include a sample PDF byte string passed beside the citations.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_ollama_chat.py::test_ollama_prompt_contains_citations_only -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_ollama_chat.py::test_the_ollama_prompt_should_contain_citations_only -q`
+- [x] `make check`
 
 **Dependencies:** Task 30
 
