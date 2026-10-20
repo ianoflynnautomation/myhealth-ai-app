@@ -724,14 +724,14 @@ make check
 
 **Acceptance criteria:**
 
-- [ ] Two pages produce two upserts, ids `<document id>:1` and `<document id>:2`.
-- [ ] Each payload includes `sourceFile`, `sourcePage`, and `content`.
-- [ ] `qdrant_client` is not in `sys.modules`.
+- [x] Two pages produce two upserts, ids `<document id>:1` and `<document id>:2`.
+- [x] Each payload includes `sourceFile`, `sourcePage`, and `content`.
+- [x] `qdrant_client` is not in `sys.modules`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_qdrant_corpus.py::test_qdrant_corpus_upserts_one_point_per_page -q`
-- [ ] `make check` without the `local` group
+- [x] RED then GREEN: `uv run pytest tests/test_qdrant_corpus.py::test_qdrant_corpus_should_upsert_one_point_per_page -q`
+- [x] `make check` without the `local` group
 
 **Dependencies:** Task 25
 
