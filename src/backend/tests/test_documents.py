@@ -58,7 +58,12 @@ def test_the_dev_app_should_expose_document_upload() -> None:
 
     # Then
     assert uploaded.status_code == 201
-    assert client.post("/chat").status_code == 404
+    chat = client.post(
+        "/chat",
+        json={"messages": [{"role": "user", "content": "Where was the zebra?"}]},
+    )
+    assert chat.status_code == 200
+    assert chat.json()["citations"] == []
 
 
 def test_post_document_stores_pdf() -> None:

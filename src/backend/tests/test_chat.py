@@ -10,6 +10,30 @@ from health_api.main import create_app
 pytestmark = pytest.mark.acceptance
 
 
+def test_chat_is_off_when_disabled() -> None:
+    response = TestClient(create_app(chat_enabled=False)).post(
+        "/chat",
+        json={"messages": [{"role": "user", "content": "hello"}]},
+    )
+
+    assert response.status_code == 404
+
+
+def test_the_stub_app_should_answer_chat_by_default() -> None:
+    # Given
+    client = TestClient(create_app())
+
+    # When
+    response = client.post(
+        "/chat",
+        json={"messages": [{"role": "user", "content": "hello"}]},
+    )
+
+    # Then
+    assert response.status_code == 200
+    assert response.json()["outputText"] == "No stored document answers that."
+
+
 def _fixture_pdf() -> bytes:
     pdf = FPDF()
     pdf.add_page()
