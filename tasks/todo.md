@@ -670,15 +670,17 @@ make check
 
 **Description:** The local parser adapts converter output into pages. The test passes a fake converter and must not import Docling.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] One converted page becomes `page_number` 1 and that page's text.
-- [ ] `docling` is not in `sys.modules` after the test.
+- [x] One converted page becomes `page_number` 1 and that page's text.
+- [x] `docling` is not in `sys.modules` after the test.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_docling_parser.py::test_docling_parser_returns_converter_pages -q`
-- [ ] `make check` without the `local` group
+- [x] RED then GREEN: `uv run pytest tests/test_docling_parser.py::test_docling_parser_should_return_converter_pages -q`
+- [x] `make check` without the `local` group
 
 **Dependencies:** Task 25
 
