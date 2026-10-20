@@ -398,14 +398,16 @@ make check
 
 **Description:** Message text cannot be empty or whitespace.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] A user message whose `content` is `"   "` returns 422 and `VALIDATION_ERROR`.
+- [x] A user message whose `content` is `"   "` returns 422 and `VALIDATION_ERROR`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_blank_content_is_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_blank_content_should_return_validation_error -q`
+- [x] `make check`
 
 **Dependencies:** Task 14
 

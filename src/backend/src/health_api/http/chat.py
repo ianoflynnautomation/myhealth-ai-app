@@ -3,7 +3,7 @@ from typing import Self
 from fastapi import Depends, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from health_api.chat.quoting_chat_model import quote
 from health_api.documents.memory_corpus import MemoryCorpus
@@ -33,6 +33,13 @@ _JSON = Depends(_require_json)
 class ChatMessage(BaseModel):
     role: str
     content: str
+
+    @field_validator("content")
+    @classmethod
+    def content_not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("Message content must not be blank.")
+        return value
 
 
 class ChatRequest(BaseModel):

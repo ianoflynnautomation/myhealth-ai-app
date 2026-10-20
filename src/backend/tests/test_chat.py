@@ -128,3 +128,24 @@ def test_empty_messages_should_return_validation_error() -> None:
             "details": {},
         }
     }
+
+
+def test_blank_content_should_return_validation_error() -> None:
+    # Given
+    client = TestClient(create_app(chat_enabled=True))
+
+    # When
+    response = client.post(
+        "/chat",
+        json={"messages": [{"role": "user", "content": "   "}]},
+    )
+
+    # Then
+    assert response.status_code == 422
+    assert response.json() == {
+        "error": {
+            "code": "VALIDATION_ERROR",
+            "message": "Message content must not be blank.",
+            "details": {},
+        }
+    }
