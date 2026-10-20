@@ -3,7 +3,8 @@ import hashlib
 from fastapi import FastAPI, File, Response, UploadFile
 from pydantic import BaseModel, Field
 
-from health_api.documents.memory_corpus import MemoryCorpus
+from health_api.documents.memory_corpus import StoredCorpus
+from health_api.documents.parser import Parser
 from health_api.documents.text_layer_parser import parse_text_layer
 from health_api.http.errors import ApiError, register_error_handler
 
@@ -21,7 +22,7 @@ class DocumentListResponse(BaseModel):
     documents: list[DocumentResponse]
 
 
-def register_documents(app: FastAPI, corpus: MemoryCorpus) -> None:
+def register_documents(app: FastAPI, corpus: StoredCorpus, *, parser: Parser | None = None) -> None:
     register_error_handler(app)
 
     @app.get("/documents")
@@ -43,7 +44,11 @@ def register_documents(app: FastAPI, corpus: MemoryCorpus) -> None:
         data = await file.read()
         if not data.startswith(b"%PDF"):
             raise ApiError(415, "UNSUPPORTED_MEDIA_TYPE", "Upload must be a PDF.")
-        pages = parse_text_layer(data)
+        if parser is None:
+            pages = parse_text_layer(data)
+        else:
+            name = file.filename or "upload.pdf"
+            pages = await parser.parse(file_name=name, data=data)
         if not any(page.text.strip() for page in pages):
             raise ApiError(422, "VALIDATION_ERROR", "PDF has no text layer.")
         stored, created = corpus.add(

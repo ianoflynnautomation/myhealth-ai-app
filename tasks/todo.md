@@ -846,15 +846,17 @@ make check
 
 **Description:** Complete local settings build the app from injectable parser, corpus, and chat-model constructors. Construction does not connect to a service.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] Upload uses the injected parser.
-- [ ] Chat uses the injected corpus and chat model.
+- [x] Upload uses the injected parser.
+- [x] Chat uses the injected corpus and chat model.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_local_factory.py::test_local_factory_uses_injected_adapters -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_local_factory.py::test_the_local_factory_should_use_injected_adapters -q`
+- [x] `make check`
 
 **Dependencies:** Tasks 27, 29, and 32
 
