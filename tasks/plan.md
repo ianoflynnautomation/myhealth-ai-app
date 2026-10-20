@@ -17,7 +17,7 @@ Pull requests stay small. `feature/app-shell` is only Tasks 1–4. The slice tab
    - GREEN: the smallest code that passes that test.
    - REFACTOR only inside the files the task lists.
 4. Run `make check`. Commit only this task's files. Mark the task done. Stop.
-5. A route that is not safe to call yet is registered only when its flag is on. `DOCUMENTS_ENABLED` defaults on for the stub app. `CHAT_ENABLED` defaults off until bad chat bodies are rejected. Tests that need a route off pass that flag into `create_app`. `PROFILE=local` is the opt-in for Docling, Qdrant, and Ollama, so those adapters do not need another flag.
+5. A route that is not safe to call yet is registered only when its flag is on. `DOCUMENTS_ENABLED` and `CHAT_ENABLED` default on for the stub app. Tests that need a route off pass that flag into `create_app`. `PROFILE=local` is the opt-in for Docling, Qdrant, and Ollama, so those adapters do not need another flag.
 6. Turn a flag on for the stub profile only in the pull request that makes that route match the spec. Documents turn on at the end of Tasks 11–12. Chat turns on at the end of Tasks 13–18.
 7. Stop at Checkpoint A and Checkpoint B for a human review.
 8. Do not run these tasks in parallel. They share one app.

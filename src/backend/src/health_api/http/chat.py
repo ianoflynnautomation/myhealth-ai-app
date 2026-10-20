@@ -1,17 +1,61 @@
-from fastapi import FastAPI
-from pydantic import BaseModel, Field
+from typing import Self
+
+from fastapi import Depends, FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from health_api.chat.quoting_chat_model import quote
 from health_api.documents.memory_corpus import MemoryCorpus
+from health_api.http.errors import ApiError, register_error_handler
+
+
+def _validation_message(exc: RequestValidationError) -> str:
+    errors = exc.errors()
+    if not errors:
+        return "Request is invalid."
+    if errors[0].get("type") == "extra_forbidden":
+        return "Unknown field."
+    message = str(errors[0]["msg"])
+    prefix = "Value error, "
+    if message.startswith(prefix):
+        return message.removeprefix(prefix)
+    return message
+
+
+def _require_json(request: Request) -> None:
+    media_type = request.headers.get("content-type", "").split(";", 1)[0].strip().lower()
+    if media_type != "application/json":
+        raise ApiError(415, "UNSUPPORTED_MEDIA_TYPE", "Chat body must be JSON.")
+
+
+_JSON = Depends(_require_json)
 
 
 class ChatMessage(BaseModel):
     role: str
     content: str
 
+    @field_validator("content")
+    @classmethod
+    def content_not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("Message content must not be blank.")
+        return value
+
 
 class ChatRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     messages: list[ChatMessage]
+
+    @model_validator(mode="after")
+    def validate_messages(self) -> Self:
+        if not self.messages:
+            raise ValueError("At least one message is required.")
+        if self.messages[-1].role != "user":
+            raise ValueError("Last message must be from the user.")
+        return self
 
 
 class CitationResponse(BaseModel):
@@ -27,8 +71,23 @@ class ChatResponse(BaseModel):
 
 
 def register_chat(app: FastAPI, corpus: MemoryCorpus) -> None:
+    register_error_handler(app)
+
+    @app.exception_handler(RequestValidationError)
+    async def handle_validation(_request: Request, exc: RequestValidationError) -> JSONResponse:
+        return JSONResponse(
+            status_code=422,
+            content={
+                "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": _validation_message(exc),
+                    "details": {},
+                }
+            },
+        )
+
     @app.post("/chat")
-    def chat(body: ChatRequest) -> ChatResponse:
+    def chat(body: ChatRequest, _: None = _JSON) -> ChatResponse:
         hits = corpus.search(body.messages[-1].content)
         content = quote(hits)
         citations = [

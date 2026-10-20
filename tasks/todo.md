@@ -12,7 +12,7 @@ One pull request is one slice from the table below. Finish that branch and merge
 | 2 | `feature/list-stored-pdf` | 5–6 | Same flag, still off. |
 | 3 | `feature/cite-stored-page` | 7–10 | `CHAT_ENABLED` defaults off. |
 | 4 | `feature/reject-bad-uploads` | 11–12 | `DOCUMENTS_ENABLED` defaults on. `CHAT_ENABLED` stays off. |
-| 5 | `feature/reject-bad-chat` | 13–18 | Turn `CHAT_ENABLED` on for the stub profile at the end of this PR. |
+| 5 | `feature/reject-bad-chat` | 13–18 | `CHAT_ENABLED` defaults on. |
 | 6 | `feature/local-settings` | 19–25 | `PROFILE=local` is the opt-in. No extra flag. |
 | 7 | `feature/docling-parser` | 26–27 | Used only when `PROFILE=local`. |
 | 8 | `feature/qdrant-corpus` | 28–29 | Used only when `PROFILE=local`. |
@@ -349,14 +349,16 @@ make check
 
 **Description:** Chat only accepts JSON.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `POST /chat` with `Content-Type: text/plain` returns 415 and `UNSUPPORTED_MEDIA_TYPE`.
+- [x] `POST /chat` with `Content-Type: text/plain` returns 415 and `UNSUPPORTED_MEDIA_TYPE`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_non_json_chat_is_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_a_non_json_chat_body_should_return_unsupported_media_type -q`
+- [x] `make check`
 
 **Dependencies:** Task 8
 
@@ -372,14 +374,16 @@ make check
 
 **Description:** A chat body must contain at least one message.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `{"messages": []}` returns 422 and `VALIDATION_ERROR`.
+- [x] `{"messages": []}` returns 422 and `VALIDATION_ERROR`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_empty_messages_are_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_empty_messages_should_return_validation_error -q`
+- [x] `make check`
 
 **Dependencies:** Task 13
 
@@ -394,14 +398,16 @@ make check
 
 **Description:** Message text cannot be empty or whitespace.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] A user message whose `content` is `"   "` returns 422 and `VALIDATION_ERROR`.
+- [x] A user message whose `content` is `"   "` returns 422 and `VALIDATION_ERROR`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_blank_content_is_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_blank_content_should_return_validation_error -q`
+- [x] `make check`
 
 **Dependencies:** Task 14
 
@@ -416,14 +422,16 @@ make check
 
 **Description:** Extra JSON fields are rejected so a typo is not ignored.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] A valid message plus `"extra": true` returns 422 and `VALIDATION_ERROR`.
+- [x] A valid message plus `"extra": true` returns 422 and `VALIDATION_ERROR`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_unknown_chat_field_is_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_an_unknown_chat_field_should_return_validation_error -q`
+- [x] `make check`
 
 **Dependencies:** Task 14
 
@@ -438,14 +446,16 @@ make check
 
 **Description:** The question has to be the last message.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] A body whose last message has role `assistant` returns 422 and `VALIDATION_ERROR`.
+- [x] A body whose last message has role `assistant` returns 422 and `VALIDATION_ERROR`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_assistant_last_message_is_rejected -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_an_assistant_last_message_should_return_validation_error -q`
+- [x] `make check`
 
 **Dependencies:** Task 14
 
@@ -460,14 +470,16 @@ make check
 
 **Description:** An unexpected failure returns the fixed 500 body. `create_app` takes a corpus override so the test can raise without a new route.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] When the corpus raises, `POST /chat` returns 500, `code` is `INTERNAL_ERROR`, and the body has no traceback and no exception text.
+- [x] When the corpus raises, `POST /chat` returns 500, `code` is `INTERNAL_ERROR`, and the body has no traceback and no exception text.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_chat.py::test_server_error_hides_traceback -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_chat.py::test_a_server_error_should_hide_the_traceback -q`
+- [x] `make check`
 
 **Dependencies:** Task 8
 
