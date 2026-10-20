@@ -63,3 +63,21 @@ def test_local_settings_should_require_an_embed_model() -> None:
         )
 
     # Then
+
+
+def test_local_settings_should_require_a_data_dir() -> None:
+    # Given
+    configured = {
+        "qdrant_url": "http://127.0.0.1:6333",
+        "ollama_base_url": "http://127.0.0.1:11434/v1",
+        "ollama_chat_model": "llama3.1",
+        "ollama_embed_model": "nomic-embed-text",
+    }
+
+    # When
+    with pytest.raises(ValidationError, match="data_dir"):
+        Settings(profile="local", **configured)
+
+    # Then
+    settings = Settings(profile="local", data_dir="../../data", **configured)
+    assert settings.data_dir == "../../data"

@@ -622,14 +622,16 @@ make check
 
 **Description:** Add the PDF directory as a required local setting.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] A local configuration with no `data_dir` raises, and the error names `data_dir`.
+- [x] A local configuration with no `data_dir` raises, and the error names `data_dir`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_require_data_dir -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_should_require_a_data_dir -q`
+- [x] `make check`
 
 **Dependencies:** Task 23
 
