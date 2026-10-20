@@ -502,14 +502,16 @@ make check
 
 **Description:** The default profile starts with no Ollama, Qdrant, or data directory settings.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `Settings(profile="stub")` succeeds when those values are unset.
+- [x] `Settings(profile="stub")` succeeds when those values are unset.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_stub_settings_need_no_service_urls -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_config.py::test_stub_settings_should_need_no_service_urls -q`
+- [x] `make check`
 
 **Dependencies:** Checkpoint A
 
