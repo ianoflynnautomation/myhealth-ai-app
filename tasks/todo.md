@@ -550,14 +550,16 @@ make check
 
 **Description:** Add the Ollama URL as a required local setting.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] `profile="local"` with a Qdrant URL and no `ollama_base_url` raises, and the error names `ollama_base_url`.
+- [x] `profile="local"` with a Qdrant URL and no `ollama_base_url` raises, and the error names `ollama_base_url`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_require_ollama_base_url -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_config.py::test_local_settings_should_require_ollama_base_url -q`
+- [x] `make check`
 
 **Dependencies:** Task 20
 

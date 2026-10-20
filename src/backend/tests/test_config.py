@@ -24,3 +24,13 @@ def test_local_settings_should_require_qdrant_url() -> None:
         Settings(profile="local")
 
     # Then
+
+
+def test_local_settings_should_require_ollama_base_url() -> None:
+    # Given
+
+    # When
+    with pytest.raises(ValidationError, match="ollama_base_url"):
+        Settings(profile="local", qdrant_url="http://127.0.0.1:6333")
+
+    # Then

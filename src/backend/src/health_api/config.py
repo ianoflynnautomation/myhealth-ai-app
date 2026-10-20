@@ -8,11 +8,17 @@ from pydantic import BaseModel, model_validator
 class Settings(BaseModel):
     profile: Literal["stub", "local"] = "stub"
     qdrant_url: str | None = None
+    ollama_base_url: str | None = None
 
     @model_validator(mode="after")
     def local_profile_requires_its_settings(self) -> Self:
         if self.profile != "local":
             return self
+        missing: list[str] = []
         if not self.qdrant_url:
-            raise ValueError("qdrant_url is required")
+            missing.append("qdrant_url")
+        if not self.ollama_base_url:
+            missing.append("ollama_base_url")
+        if missing:
+            raise ValueError(f"{', '.join(missing)} is required")
         return self
