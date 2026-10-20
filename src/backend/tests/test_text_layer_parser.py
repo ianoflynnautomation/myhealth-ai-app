@@ -1,6 +1,9 @@
+import pytest
 from fpdf import FPDF
 
 from health_api.documents.text_layer_parser import parse_text_layer
+
+pytestmark = pytest.mark.unit
 
 
 def _fixture_pdf() -> bytes:

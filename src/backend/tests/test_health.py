@@ -1,7 +1,10 @@
+import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from health_api.main import create_app
+
+pytestmark = pytest.mark.acceptance
 
 
 def test_create_app_returns_an_app() -> None:

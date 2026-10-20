@@ -1,9 +1,12 @@
 import hashlib
 
+import pytest
 from fastapi.testclient import TestClient
 from fpdf import FPDF
 
 from health_api.main import create_app
+
+pytestmark = pytest.mark.acceptance
 
 
 def _fixture_pdf() -> bytes:

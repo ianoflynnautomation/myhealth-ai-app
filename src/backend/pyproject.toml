@@ -22,6 +22,11 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = ["--strict-markers"]
+markers = [
+    "unit: one module in process, no TestClient and no external service",
+    "acceptance: in-process TestClient against the stub app; no Docker and no network",
+]
 
 [tool.ruff]
 line-length = 100

@@ -285,6 +285,8 @@ Errors:
 
 pytest. Acceptance tests build the app with `create_app(Settings(profile="stub"))` and call it through FastAPI's `TestClient`. No Docker, no network.
 
+Each test has one marker. `unit` calls one module in process and does not build the app. `acceptance` is the `TestClient` suite. `make check` runs both. `integration` is reserved for a later suite that starts a real service with testcontainers, such as Qdrant. That suite stays out of `make check`.
+
 Acceptance test, one flow:
 
 1. Build a one-page PDF with fpdf2 whose text is `DemoMarker value is 10 units.`
