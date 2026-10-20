@@ -772,15 +772,17 @@ make check
 
 **Description:** The chat client sends one HTTP request to the configured base URL and names the chat model. The test records the request with a fake transport.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] The request URL starts with `OLLAMA_BASE_URL`.
-- [ ] The JSON body names `OLLAMA_CHAT_MODEL`.
+- [x] The request URL starts with `OLLAMA_BASE_URL`.
+- [x] The JSON body names `OLLAMA_CHAT_MODEL`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_ollama_chat.py::test_ollama_posts_to_configured_model -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_ollama_chat.py::test_ollama_should_post_to_the_configured_model -q`
+- [x] `make check`
 
 **Dependencies:** Task 25
 
@@ -795,15 +797,17 @@ make check
 
 **Description:** The request carries the retrieved page text. It does not carry the original PDF bytes.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] The recorded body includes each citation's `content`.
-- [ ] The recorded body does not include a sample PDF byte string passed beside the citations.
+- [x] The recorded body includes each citation's `content`.
+- [x] The recorded body does not include a sample PDF byte string passed beside the citations.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_ollama_chat.py::test_ollama_prompt_contains_citations_only -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_ollama_chat.py::test_the_ollama_prompt_should_contain_citations_only -q`
+- [x] `make check`
 
 **Dependencies:** Task 30
 
@@ -818,14 +822,16 @@ make check
 
 **Description:** The answer shown to the caller is the text from the model response.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] When the fake response content is `cited answer`, `answer(...)` returns `cited answer`.
+- [x] When the fake response content is `cited answer`, `answer(...)` returns `cited answer`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_ollama_chat.py::test_ollama_returns_model_text -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_ollama_chat.py::test_ollama_should_return_the_model_text -q`
+- [x] `make check`
 
 **Dependencies:** Task 31
 
