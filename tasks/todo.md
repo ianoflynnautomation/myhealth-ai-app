@@ -846,15 +846,17 @@ make check
 
 **Description:** Complete local settings build the app from injectable parser, corpus, and chat-model constructors. Construction does not connect to a service.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] Upload uses the injected parser.
-- [ ] Chat uses the injected corpus and chat model.
+- [x] Upload uses the injected parser.
+- [x] Chat uses the injected corpus and chat model.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_local_factory.py::test_local_factory_uses_injected_adapters -q`
-- [ ] `make check`
+- [x] RED then GREEN: `uv run pytest tests/test_local_factory.py::test_the_local_factory_should_use_injected_adapters -q`
+- [x] `make check`
 
 **Dependencies:** Tasks 27, 29, and 32
 
@@ -869,15 +871,17 @@ make check
 
 **Description:** When the local constructors report that Docling or the Qdrant client is not installed, startup fails before listen.
 
+**Status:** done
+
 **Acceptance criteria:**
 
-- [ ] Startup raises an error whose message contains `uv sync --group local`.
-- [ ] The stub tests still pass and still do not import `docling` or `qdrant_client`.
+- [x] Startup raises an error whose message contains `uv sync --group local`.
+- [x] The stub tests still pass and still do not import `docling` or `qdrant_client`.
 
 **Verification:**
 
-- [ ] RED then GREEN: `uv run pytest tests/test_local_factory.py::test_missing_local_install_names_sync_command -q`
-- [ ] `make check` without Docker and without the `local` group
+- [x] RED then GREEN: `uv run pytest tests/test_local_factory.py::test_a_missing_local_install_should_name_the_sync_command -q`
+- [x] `make check` without Docker and without the `local` group
 
 **Dependencies:** Task 33
 

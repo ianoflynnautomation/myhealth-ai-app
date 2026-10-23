@@ -1,4 +1,5 @@
-from typing import Self
+from collections.abc import Sequence
+from typing import Protocol, Self
 
 from fastapi import Depends, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -6,7 +7,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from health_api.chat.quoting_chat_model import quote
-from health_api.documents.memory_corpus import MemoryCorpus
+from health_api.documents.memory_corpus import StoredCorpus
 from health_api.http.errors import ApiError, register_error_handler
 
 
@@ -70,7 +71,13 @@ class ChatResponse(BaseModel):
     citations: list[CitationResponse]
 
 
-def register_chat(app: FastAPI, corpus: MemoryCorpus) -> None:
+class ChatModel(Protocol):
+    async def answer(self, query: str, citations: Sequence[CitationResponse]) -> str: ...
+
+
+def register_chat(
+    app: FastAPI, corpus: StoredCorpus, *, chat_model: ChatModel | None = None
+) -> None:
     register_error_handler(app)
 
     @app.exception_handler(RequestValidationError)
@@ -87,9 +94,9 @@ def register_chat(app: FastAPI, corpus: MemoryCorpus) -> None:
         )
 
     @app.post("/chat")
-    def chat(body: ChatRequest, _: None = _JSON) -> ChatResponse:
-        hits = corpus.search(body.messages[-1].content)
-        content = quote(hits)
+    async def chat(body: ChatRequest, _: None = _JSON) -> ChatResponse:
+        query = body.messages[-1].content
+        hits = corpus.search(query)
         citations = [
             CitationResponse(
                 id=f"{hit.document_id}:{hit.page_number}",
@@ -99,4 +106,8 @@ def register_chat(app: FastAPI, corpus: MemoryCorpus) -> None:
             )
             for hit in hits[:1]
         ]
+        if chat_model is None:
+            content = quote(hits)
+        else:
+            content = await chat_model.answer(query, citations)
         return ChatResponse(output_text=content, citations=citations)

@@ -1,5 +1,6 @@
 import re
 from dataclasses import dataclass
+from typing import Protocol
 
 from health_api.documents.text_layer_parser import ParsedPage
 
@@ -24,6 +25,16 @@ class StoredDocument:
     source_file: str
     page_count: int
     chunk_count: int
+
+
+class StoredCorpus(Protocol):
+    documents: dict[str, StoredDocument]
+
+    def add(
+        self, *, document_id: str, source_file: str, pages: list[ParsedPage]
+    ) -> tuple[StoredDocument, bool]: ...
+
+    def search(self, query: str) -> list[StoredChunk]: ...
 
 
 class MemoryCorpus:
