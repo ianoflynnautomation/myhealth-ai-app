@@ -82,21 +82,21 @@ Backend CI does not wait on those specs. The package is already on `main`, and t
 ## CI-01: Select backend changes in the path filter
 
 **Id:** CI-01
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** Add a `backend` filter so the new jobs run when `src/backend` or the workflow files change, and skip when a pull request only touches docs or markdown. Follow the existing `frontend` filter in `.github/path-filters.yml`.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `.github/path-filters.yml` has a `backend` filter covering `src/backend/**` and the workflow files that call the backend jobs.
-- [ ] A docs-only change does not select `backend`.
+- [x] `.github/path-filters.yml` has a `backend` filter covering `src/backend/**` and the workflow files that call the backend jobs.
+- [x] A docs-only change does not select `backend`.
 
 **Verification:**
 
-- [ ] The filter matches `src/backend/src/health_api/main.py`.
-- [ ] The filter does not match `tasks/todo.md`.
+- [x] The filter matches `src/backend/src/health_api/main.py`.
+- [x] The filter does not match `tasks/todo.md`.
 
 **Dependencies:** AS-CPB
 
@@ -109,22 +109,22 @@ Backend CI does not wait on those specs. The package is already on `main`, and t
 ## CI-02: Lint the backend on a pull request
 
 **Id:** CI-02
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** On a pull request to `main`, when the `backend` filter matches, run Ruff lint from `src/backend`. Install with `uv sync --frozen` and do not install the `local` group. Pin actions to a full SHA, the same way the frontend jobs are pinned.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `ci-pr.yml` has a backend lint job that runs `uv run ruff check .` in `src/backend`.
-- [ ] The job uses Python 3.13 and does not pass `--group local` or `--all-groups`.
-- [ ] The job is listed in `pr_complete.needs`.
+- [x] `ci-pr.yml` has a backend lint job that runs `uv run ruff check .` in `src/backend`.
+- [x] The job uses Python 3.13 and does not pass `--group local` or `--all-groups`.
+- [x] The job is listed in `pr_complete.needs`.
 
 **Verification:**
 
-- [ ] `actionlint` accepts `.github/workflows/ci-pr.yml`.
-- [ ] A reviewer can see the job is skipped unless `backend` is in the changed paths.
+- [x] `actionlint` accepts `.github/workflows/ci-pr.yml`.
+- [x] A reviewer can see the job is skipped unless `backend` is in the changed paths.
 
 **Dependencies:** CI-01
 
@@ -137,21 +137,21 @@ Backend CI does not wait on those specs. The package is already on `main`, and t
 ## CI-03: Check backend formatting on a pull request
 
 **Id:** CI-03
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** Add the format gate next to lint. It runs `uv run ruff format --check .` from `src/backend` after the same frozen sync.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `ci-pr.yml` has a backend format job that runs `uv run ruff format --check .` in `src/backend`.
-- [ ] The job does not install the `local` group.
-- [ ] The job is listed in `pr_complete.needs`.
+- [x] `ci-pr.yml` has a backend format job that runs `uv run ruff format --check .` in `src/backend`.
+- [x] The job does not install the `local` group.
+- [x] The job is listed in `pr_complete.needs`.
 
 **Verification:**
 
-- [ ] `actionlint` accepts `.github/workflows/ci-pr.yml`.
+- [x] `actionlint` accepts `.github/workflows/ci-pr.yml`.
 
 **Dependencies:** CI-01
 
@@ -164,21 +164,21 @@ Backend CI does not wait on those specs. The package is already on `main`, and t
 ## CI-04: Typecheck the backend on a pull request
 
 **Id:** CI-04
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** `make check` includes pyright. The pull request gate runs `uv run pyright` from `src/backend` so CI is not weaker than the local check.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `ci-pr.yml` has a backend typecheck job that runs `uv run pyright` in `src/backend`.
-- [ ] The job does not install the `local` group.
-- [ ] The job is listed in `pr_complete.needs`.
+- [x] `ci-pr.yml` has a backend typecheck job that runs `uv run pyright` in `src/backend`.
+- [x] The job does not install the `local` group.
+- [x] The job is listed in `pr_complete.needs`.
 
 **Verification:**
 
-- [ ] `actionlint` accepts `.github/workflows/ci-pr.yml`.
+- [x] `actionlint` accepts `.github/workflows/ci-pr.yml`.
 
 **Dependencies:** CI-01
 
@@ -191,23 +191,23 @@ Backend CI does not wait on those specs. The package is already on `main`, and t
 ## CI-05: Test the backend on a pull request and on main
 
 **Id:** CI-05
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** Run pytest from `src/backend` on pull requests and again on `main`. Upload JUnit XML the way the frontend unit job uploads its report. Do not start Docker or install the `local` group.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `ci-pr.yml` runs `uv run pytest --junitxml=test-results/pytest.xml` in `src/backend` and uploads that file.
-- [ ] `ci-main.yml` runs the same test command when `backend` changes.
-- [ ] Both jobs are listed in `pr_complete.needs` and `main_complete.needs`.
-- [ ] Neither job installs the `local` group.
+- [x] `ci-pr.yml` runs `uv run pytest --junitxml=test-results/pytest.xml` in `src/backend` and uploads that file.
+- [x] `ci-main.yml` runs the same test command when `backend` changes.
+- [x] Both jobs are listed in `pr_complete.needs` and `main_complete.needs`.
+- [x] Neither job installs the `local` group.
 
 **Verification:**
 
-- [ ] `actionlint` accepts both workflow files.
-- [ ] The pytest command does not select the `integration` marker.
+- [x] `actionlint` accepts both workflow files.
+- [x] The pytest command does not select the `integration` marker.
 
 **Dependencies:** CI-01
 
@@ -221,23 +221,23 @@ Backend CI does not wait on those specs. The package is already on `main`, and t
 ## CI-06: Build the backend package on a pull request and on main
 
 **Id:** CI-06
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** The backend build is the package build, `uv build`, from `src/backend`. Run it on pull requests and again on `main`. This is not a container image and does not start Compose or Minikube.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `ci-pr.yml` runs `uv build` in `src/backend`.
-- [ ] `ci-main.yml` runs `uv build` when `backend` changes.
-- [ ] Both jobs are listed in `pr_complete.needs` and `main_complete.needs`.
-- [ ] Neither job installs the `local` group.
+- [x] `ci-pr.yml` runs `uv build` in `src/backend`.
+- [x] `ci-main.yml` runs `uv build` when `backend` changes.
+- [x] Both jobs are listed in `pr_complete.needs` and `main_complete.needs`.
+- [x] Neither job installs the `local` group.
 
 **Verification:**
 
-- [ ] `actionlint` accepts both workflow files.
-- [ ] `uv build` from `src/backend` produces a wheel locally.
+- [x] `actionlint` accepts both workflow files.
+- [x] `uv build` from `src/backend` produces a wheel locally.
 
 **Dependencies:** CI-01
 

@@ -139,6 +139,151 @@ jobs:
         HUSKY=0
       commands: npm run build
 
+  backend_lint:
+    name: Backend Lint
+    needs: detect_changes
+    if: contains(fromJSON(needs.detect_changes.outputs.changes), 'backend')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9  # v9.0.0
+        with:
+          version: "0.13.1"
+          python-version: "3.13"
+          enable-cache: true
+          cache-dependency-glob: src/backend/uv.lock
+      - name: Sync dependencies
+        working-directory: src/backend
+        run: uv sync --frozen
+      - name: Lint
+        working-directory: src/backend
+        run: uv run ruff check .
+
+  backend_format:
+    name: Backend Format
+    needs: detect_changes
+    if: contains(fromJSON(needs.detect_changes.outputs.changes), 'backend')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9  # v9.0.0
+        with:
+          version: "0.13.1"
+          python-version: "3.13"
+          enable-cache: true
+          cache-dependency-glob: src/backend/uv.lock
+      - name: Sync dependencies
+        working-directory: src/backend
+        run: uv sync --frozen
+      - name: Format
+        working-directory: src/backend
+        run: uv run ruff format --check .
+
+  backend_typecheck:
+    name: Backend Typecheck
+    needs: detect_changes
+    if: contains(fromJSON(needs.detect_changes.outputs.changes), 'backend')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9  # v9.0.0
+        with:
+          version: "0.13.1"
+          python-version: "3.13"
+          enable-cache: true
+          cache-dependency-glob: src/backend/uv.lock
+      - name: Sync dependencies
+        working-directory: src/backend
+        run: uv sync --frozen
+      - name: Typecheck
+        working-directory: src/backend
+        run: uv run pyright
+
+  backend_unit:
+    name: Backend Unit Tests
+    needs: detect_changes
+    if: contains(fromJSON(needs.detect_changes.outputs.changes), 'backend')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9  # v9.0.0
+        with:
+          version: "0.13.1"
+          python-version: "3.13"
+          enable-cache: true
+          cache-dependency-glob: src/backend/uv.lock
+      - name: Sync dependencies
+        working-directory: src/backend
+        run: uv sync --frozen
+      - name: Test
+        working-directory: src/backend
+        run: |
+          mkdir -p test-results
+          uv run pytest --junitxml=test-results/pytest.xml
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: backend-pytest
+          path: src/backend/test-results/pytest.xml
+          if-no-files-found: error
+          retention-days: 7
+
+  backend_build:
+    name: Backend Build
+    needs: detect_changes
+    if: contains(fromJSON(needs.detect_changes.outputs.changes), 'backend')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9  # v9.0.0
+        with:
+          version: "0.13.1"
+          python-version: "3.13"
+          enable-cache: true
+          cache-dependency-glob: src/backend/uv.lock
+      - name: Sync dependencies
+        working-directory: src/backend
+        run: uv sync --frozen
+      - name: Build
+        working-directory: src/backend
+        run: uv build
+
   pr_complete:
     name: PR Checks Complete
     runs-on: ubuntu-latest
@@ -152,6 +297,11 @@ jobs:
       - frontend_typecheck
       - frontend_unit
       - frontend_build
+      - backend_lint
+      - backend_format
+      - backend_typecheck
+      - backend_unit
+      - backend_build
     steps:
       - name: Verify all required checks succeeded or were intentionally skipped
         uses: ianoflynnautomation/bjjeire-ci-templates/actions/check-required-jobs@a9bc3cb4b8ea83909408c94409b9de360160b96b  # v1.8.0

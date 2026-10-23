@@ -3,3 +3,9 @@ frontend:
   - ".github/workflows/ci-pr.yml"
   - ".github/workflows/ci-main.yml"
   - ".github/path-filters.yml"
+
+backend:
+  - "src/backend/**"
+  - ".github/workflows/ci-pr.yml"
+  - ".github/workflows/ci-main.yml"
+  - ".github/path-filters.yml"
