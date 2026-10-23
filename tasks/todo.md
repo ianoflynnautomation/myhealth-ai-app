@@ -109,22 +109,22 @@ Backend CI does not wait on those specs. The package is already on `main`, and t
 ## CI-02: Lint the backend on a pull request
 
 **Id:** CI-02
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** On a pull request to `main`, when the `backend` filter matches, run Ruff lint from `src/backend`. Install with `uv sync --frozen` and do not install the `local` group. Pin actions to a full SHA, the same way the frontend jobs are pinned.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `ci-pr.yml` has a backend lint job that runs `uv run ruff check .` in `src/backend`.
-- [ ] The job uses Python 3.13 and does not pass `--group local` or `--all-groups`.
-- [ ] The job is listed in `pr_complete.needs`.
+- [x] `ci-pr.yml` has a backend lint job that runs `uv run ruff check .` in `src/backend`.
+- [x] The job uses Python 3.13 and does not pass `--group local` or `--all-groups`.
+- [x] The job is listed in `pr_complete.needs`.
 
 **Verification:**
 
-- [ ] `actionlint` accepts `.github/workflows/ci-pr.yml`.
-- [ ] A reviewer can see the job is skipped unless `backend` is in the changed paths.
+- [x] `actionlint` accepts `.github/workflows/ci-pr.yml`.
+- [x] A reviewer can see the job is skipped unless `backend` is in the changed paths.
 
 **Dependencies:** CI-01
 
