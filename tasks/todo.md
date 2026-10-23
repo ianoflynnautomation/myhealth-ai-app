@@ -299,22 +299,22 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-03: Parse a stored document from the API
 
 **Id:** CU-03
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** Add a document client. It parses the list and upload JSON with zod. An upload sends `FormData` with the field name `file` and does not set `Content-Type`.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] A 201 body `{ "id", "sourceFile", "pageCount", "chunkCount" }` parses.
-- [ ] The upload request is multipart, the field name is `file`, and the client does not set `Content-Type`.
-- [ ] A 415 body returns the message `Upload must be a PDF.`
-- [ ] A non-JSON error becomes `The API could not be reached.`
+- [x] A 201 body `{ "id", "sourceFile", "pageCount", "chunkCount" }` parses.
+- [x] The upload request is multipart, the field name is `file`, and the client does not set `Content-Type`.
+- [x] A 415 body returns the message `Upload must be a PDF.`
+- [x] A non-JSON error becomes `The API could not be reached.`
 
 **Verification:**
 
-- [ ] `npx vitest run src/api/documents.test.ts -t "should post the file"` from `src/frontend`.
+- [x] `npx vitest run src/api/documents.test.ts -t "should post the file"` from `src/frontend`.
 
 **Dependencies:** CU-CP1
 
