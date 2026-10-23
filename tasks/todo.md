@@ -82,21 +82,21 @@ Backend CI does not wait on those specs. The package is already on `main`, and t
 ## CI-01: Select backend changes in the path filter
 
 **Id:** CI-01
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** Add a `backend` filter so the new jobs run when `src/backend` or the workflow files change, and skip when a pull request only touches docs or markdown. Follow the existing `frontend` filter in `.github/path-filters.yml`.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `.github/path-filters.yml` has a `backend` filter covering `src/backend/**` and the workflow files that call the backend jobs.
-- [ ] A docs-only change does not select `backend`.
+- [x] `.github/path-filters.yml` has a `backend` filter covering `src/backend/**` and the workflow files that call the backend jobs.
+- [x] A docs-only change does not select `backend`.
 
 **Verification:**
 
-- [ ] The filter matches `src/backend/src/health_api/main.py`.
-- [ ] The filter does not match `tasks/todo.md`.
+- [x] The filter matches `src/backend/src/health_api/main.py`.
+- [x] The filter does not match `tasks/todo.md`.
 
 **Dependencies:** AS-CPB
 
