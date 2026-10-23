@@ -22,18 +22,18 @@ Backend CI does not wait on those specs. The package is already on `main`, and t
 ## CU-01: Write the chat-ui spec
 
 **Id:** CU-01
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** Specify how the existing React page uploads a PDF and shows an answer with citations. The page today is a placeholder. The HTTP contract stays the one in [docs/SPEC-app-shell.md](../docs/SPEC-app-shell.md). This task does not change `src/frontend` or `src/backend`.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `docs/SPEC-chat-ui.md` states the objective, commands, project structure, code style, testing strategy, boundaries, and success criteria.
-- [ ] The spec uses `POST /documents` and `POST /chat` as they are. It does not add a backend route.
-- [ ] The fixture sentence remains `DemoMarker value is 10 units.`
-- [ ] [docs/capability-map.md](../docs/capability-map.md) links this spec.
+- [x] `docs/SPEC-chat-ui.md` states the objective, commands, project structure, code style, testing strategy, boundaries, and success criteria.
+- [x] The spec uses `POST /documents` and `POST /chat` as they are. It does not add a backend route.
+- [x] The fixture sentence remains `DemoMarker value is 10 units.`
+- [x] [docs/capability-map.md](../docs/capability-map.md) links this spec.
 
 **Verification:**
 
