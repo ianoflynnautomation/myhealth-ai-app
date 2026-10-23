@@ -29,6 +29,9 @@ export function ChatPage() {
           <CardDescription>Ask questions about your documents.</CardDescription>
         </CardHeader>
         <CardContent className="min-h-48 space-y-3 text-sm text-muted-foreground">
+          {documents.isError ? (
+            <p role="alert">{documents.error.message}</p>
+          ) : null}
           {documents.isSuccess && documents.data.length === 0 ? (
             <p>No documents yet.</p>
           ) : null}

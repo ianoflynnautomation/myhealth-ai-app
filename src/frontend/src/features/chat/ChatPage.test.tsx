@@ -38,4 +38,18 @@ describe('ChatPage', () => {
     expect(item).toHaveTextContent('example.pdf')
     expect(item).toHaveTextContent('1')
   })
+
+  it('the page should not call an empty store when the list fails', async () => {
+    // Given
+    server.use(http.get('/documents', () => HttpResponse.error()))
+
+    // When
+    renderWithProviders(<ChatPage />)
+
+    // Then
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'The API could not be reached.',
+    )
+    expect(screen.queryByText('No documents yet.')).not.toBeInTheDocument()
+  })
 })

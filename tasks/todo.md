@@ -359,20 +359,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-05: A failed document list is not an empty store
 
 **Id:** CU-05
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** When `GET /documents` fails, the page does not show `No documents yet.` A network failure shows `The API could not be reached.` An error envelope shows `error.message`.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] A network failure shows `The API could not be reached.`
-- [ ] That failure does not show `No documents yet.`
+- [x] A network failure shows `The API could not be reached.`
+- [x] That failure does not show `No documents yet.`
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should not call an empty store"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should not call an empty store"` from `src/frontend`.
 
 **Dependencies:** CU-04
 
