@@ -329,22 +329,22 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-04: The page lists stored documents
 
 **Id:** CU-04
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** Opening the page calls `GET /documents`. A stored file shows `sourceFile` and `pageCount`. A successful empty list shows `No documents yet.`
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The heading `MyHealth AI` and the textbox named `Message` stay on the page.
-- [ ] An empty list shows `No documents yet.`
-- [ ] A stored file shows its `sourceFile` and `pageCount`.
+- [x] The heading `MyHealth AI` and the textbox named `Message` stay on the page.
+- [x] An empty list shows `No documents yet.`
+- [x] A stored file shows its `sourceFile` and `pageCount`.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should list a stored pdf"` from `src/frontend`.
-- [ ] `npx vitest run src/app/App.test.tsx -t "renders the chat page"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should list a stored pdf"` from `src/frontend`.
+- [x] `npx vitest run src/app/App.test.tsx -t "renders the chat page"` from `src/frontend`.
 
 **Dependencies:** CU-03
 
