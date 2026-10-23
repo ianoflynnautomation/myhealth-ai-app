@@ -62,6 +62,7 @@ export function ChatPage() {
               }}
             />
           </label>
+          {upload.isError ? <p role="alert">{upload.error.message}</p> : null}
           {documents.isError ? (
             <p role="alert">{documents.error.message}</p>
           ) : null}

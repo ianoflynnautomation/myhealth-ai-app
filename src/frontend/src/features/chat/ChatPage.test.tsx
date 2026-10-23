@@ -89,4 +89,46 @@ describe('ChatPage', () => {
     expect(item).toHaveTextContent('example.pdf')
     expect(item).toHaveTextContent('1')
   })
+
+  it('the page should show the upload error', async () => {
+    // Given
+    const user = userEvent.setup()
+    const listed = {
+      id: 'listed',
+      sourceFile: 'notes.pdf',
+      pageCount: 2,
+      chunkCount: 2,
+    }
+    server.use(
+      http.get('/documents', () => HttpResponse.json({ documents: [listed] })),
+      http.post('/documents', () =>
+        HttpResponse.json(
+          {
+            error: {
+              code: 'UNSUPPORTED_MEDIA_TYPE',
+              message: 'Upload must be a PDF.',
+              details: {},
+            },
+          },
+          { status: 415 },
+        ),
+      ),
+    )
+    renderWithProviders(<ChatPage />)
+    expect(await screen.findByRole('listitem')).toHaveTextContent('notes.pdf')
+
+    // When
+    await user.upload(
+      screen.getByLabelText('Upload PDF'),
+      new File(['nope'], 'scan.pdf', { type: 'application/pdf' }),
+    )
+
+    // Then
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Upload must be a PDF.',
+    )
+    expect(screen.getAllByRole('listitem')).toHaveLength(1)
+    expect(screen.getByRole('listitem')).toHaveTextContent('notes.pdf')
+    expect(screen.getByRole('listitem')).toHaveTextContent('2')
+  })
 })

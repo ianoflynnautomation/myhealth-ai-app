@@ -413,20 +413,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-07: A rejected upload shows the API message
 
 **Id:** CU-07
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** A failed upload shows `error.message` and leaves the document list as it was.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] A 415 response shows `Upload must be a PDF.`
-- [ ] The files already listed stay listed.
+- [x] A 415 response shows `Upload must be a PDF.`
+- [x] The files already listed stay listed.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should show the upload error"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should show the upload error"` from `src/frontend`.
 
 **Dependencies:** CU-06
 
