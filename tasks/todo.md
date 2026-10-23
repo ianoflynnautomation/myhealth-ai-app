@@ -137,21 +137,21 @@ Backend CI does not wait on those specs. The package is already on `main`, and t
 ## CI-03: Check backend formatting on a pull request
 
 **Id:** CI-03
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** Add the format gate next to lint. It runs `uv run ruff format --check .` from `src/backend` after the same frozen sync.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `ci-pr.yml` has a backend format job that runs `uv run ruff format --check .` in `src/backend`.
-- [ ] The job does not install the `local` group.
-- [ ] The job is listed in `pr_complete.needs`.
+- [x] `ci-pr.yml` has a backend format job that runs `uv run ruff format --check .` in `src/backend`.
+- [x] The job does not install the `local` group.
+- [x] The job is listed in `pr_complete.needs`.
 
 **Verification:**
 
-- [ ] `actionlint` accepts `.github/workflows/ci-pr.yml`.
+- [x] `actionlint` accepts `.github/workflows/ci-pr.yml`.
 
 **Dependencies:** CI-01
 
