@@ -386,20 +386,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-06: An upload shows the file once
 
 **Id:** CU-06
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** Choosing a PDF posts it to `POST /documents`. `201` and `200` both show that `id` once. The same bytes do not add a second row.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] After a 201, the list shows that file's `sourceFile` and `pageCount`.
-- [ ] A 200 for an `id` already on the page does not add a second row.
+- [x] After a 201, the list shows that file's `sourceFile` and `pageCount`.
+- [x] A 200 for an `id` already on the page does not add a second row.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should show an uploaded pdf once"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should show an uploaded pdf once"` from `src/frontend`.
 
 **Dependencies:** CU-03, CU-04
 

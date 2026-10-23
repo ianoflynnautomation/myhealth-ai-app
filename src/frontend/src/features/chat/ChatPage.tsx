@@ -1,6 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { SendHorizontal } from 'lucide-react'
-import { listDocuments } from '@/api/documents'
+import {
+  listDocuments,
+  uploadDocument,
+  type StoredDocument,
+} from '@/api/documents'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -14,9 +18,22 @@ import { Textarea } from '@/components/ui/textarea'
 
 /** Chat page. Lists stored PDFs and will send a question to POST /chat. */
 export function ChatPage() {
+  const queryClient = useQueryClient()
   const documents = useQuery({
     queryKey: ['documents'],
     queryFn: listDocuments,
+  })
+  const upload = useMutation({
+    mutationFn: uploadDocument,
+    onSuccess: (document) => {
+      queryClient.setQueryData<StoredDocument[]>(['documents'], (current) => {
+        const list = current ?? []
+        if (list.some((item) => item.id === document.id)) {
+          return list
+        }
+        return [...list, document]
+      })
+    },
   })
 
   return (
@@ -29,6 +46,22 @@ export function ChatPage() {
           <CardDescription>Ask questions about your documents.</CardDescription>
         </CardHeader>
         <CardContent className="min-h-48 space-y-3 text-sm text-muted-foreground">
+          <label className="block text-foreground">
+            Upload PDF
+            <input
+              type="file"
+              accept="application/pdf,.pdf"
+              className="mt-1 block w-full"
+              disabled={upload.isPending}
+              onChange={(event) => {
+                const file = event.currentTarget.files?.[0]
+                event.currentTarget.value = ''
+                if (file) {
+                  upload.mutate(file)
+                }
+              }}
+            />
+          </label>
           {documents.isError ? (
             <p role="alert">{documents.error.message}</p>
           ) : null}
