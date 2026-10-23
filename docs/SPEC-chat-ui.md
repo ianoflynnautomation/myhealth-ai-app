@@ -19,7 +19,7 @@ Assumptions that bind this spec:
 
 1. The only route is `/`. There is no settings page.
 2. The page calls `GET /documents`, `POST /documents`, and `POST /chat` as they are. It does not change the backend.
-3. Each chat request sends one message, the current question: `{ "role": "user", "content": "..." }`. Earlier questions stay on screen until reload. They are not sent again. Stored chat history is later.
+3. Each chat request sends one message, the current question: `{ "role": "user", "content": "..." }`. A message that is empty after trim does not call `POST /chat`. The API treats that as blank. Earlier questions stay on screen until reload. They are not sent again. Stored chat history is later.
 4. `outputText` and citation `content` are shown as text. The page does not parse them as HTML or Markdown.
 5. In dev, Vite proxies `/documents` and `/chat` to `http://127.0.0.1:8000`. The page uses those relative paths.
 6. Opening the page loads `GET /documents`, so a refresh shows files still stored in that API process.
@@ -93,6 +93,13 @@ Imports use `@/`. Components are functions. The existing names stay: the heading
 Wire fields stay camelCase. The client types use those names.
 
 ```ts
+const DocumentResponse = z.object({
+  id: z.string(),
+  sourceFile: z.string(),
+  pageCount: z.number().int().nonnegative(),
+  chunkCount: z.number().int().nonnegative(),
+})
+
 const ChatResponse = z.object({
   outputText: z.string(),
   citations: z.array(
@@ -118,7 +125,7 @@ await fetch('/chat', {
 })
 ```
 
-An upload is `multipart/form-data` with one field named `file`. New test titles are sentences such as `the page should show the cited page`. The existing test `renders the chat page at /` keeps its name.
+An upload appends the file to `FormData` under the field name `file`. The client does not set `Content-Type`. The browser sets the multipart boundary. New test titles are sentences such as `the page should show the cited page`. The existing test `renders the chat page at /` keeps its name.
 
 ### Page
 
@@ -127,7 +134,7 @@ What is already on the page stays visible: the heading, the description `Ask que
 The page adds:
 
 - A file input named `Upload PDF`. It accepts a PDF. The control posts that file to `POST /documents`.
-- A document list. Each row shows `sourceFile` and `pageCount`. No documents: `No documents yet.`
+- A document list. Each row shows `sourceFile` and `pageCount`. A successful list with no documents shows `No documents yet.` When the list request fails and the body is the error envelope, the page shows `error.message`. When it fails any other way, the page shows `The API could not be reached.` A failed list does not show `No documents yet.`
 - The transcript. No successful answer yet: `No messages yet.`
 
 Upload:
@@ -138,7 +145,7 @@ Upload:
 
 Question:
 
-- Send stays disabled while the message is blank or a chat request is in flight. A blank message does not call `POST /chat`.
+- Send stays disabled while the trimmed message is empty or a chat request is in flight. An empty trimmed message does not call `POST /chat`.
 - A `200` appends the question and `outputText` to the transcript.
 - When `citations` is not empty, the page shows a list. Each item shows `sourceFile`, `sourcePage`, and `content`.
 - When `citations` is empty, the page shows `outputText` and no citation list. The stub uses `No stored document answers that.`
