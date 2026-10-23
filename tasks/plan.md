@@ -2,13 +2,13 @@
 
 ## Overview
 
-Build the Python API in [docs/SPEC-app-shell.md](../docs/SPEC-app-shell.md) as 34 slices. Each slice is one behavior, one test, the minimum code that makes that test pass, and one commit. The full heading, description, acceptance criteria, and test command for every slice are in [tasks/todo.md](todo.md).
+Build the Python API in [docs/SPEC-app-shell.md](../docs/SPEC-app-shell.md) as 34 slices. Each slice is one behavior, one test, the minimum code that makes that test pass, and one commit. The full heading, description, acceptance criteria, and test command for every slice are in [tasks/app-shell.md](app-shell.md). The list is closed. Active work is [tasks/todo.md](todo.md).
 
 The stub profile is finished and reviewed before any Docling, Qdrant, or Ollama code exists.
 
 ## How an agent runs this
 
-Pull requests stay small. `feature/app-shell` is only Tasks 1–4. The slice table in [tasks/todo.md](todo.md) names the branch for every later group. Merge one pull request before cutting the next branch from `main`.
+Pull requests stay small. `feature/app-shell` is only Tasks 1–4. The slice table in [tasks/app-shell.md](app-shell.md) names the branch for every group. Merge one pull request before cutting the next branch from `main`.
 
 1. Implement exactly one pending task on the branch for its slice. Stop after it. `/build auto` runs the rest of that slice only after an explicit approval, and it does not cross into the next pull request.
 2. Read that task and the spec sections it names. Do not load later tasks or the frontend.
