@@ -221,23 +221,23 @@ Backend CI does not wait on those specs. The package is already on `main`, and t
 ## CI-06: Build the backend package on a pull request and on main
 
 **Id:** CI-06
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** The backend build is the package build, `uv build`, from `src/backend`. Run it on pull requests and again on `main`. This is not a container image and does not start Compose or Minikube.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `ci-pr.yml` runs `uv build` in `src/backend`.
-- [ ] `ci-main.yml` runs `uv build` when `backend` changes.
-- [ ] Both jobs are listed in `pr_complete.needs` and `main_complete.needs`.
-- [ ] Neither job installs the `local` group.
+- [x] `ci-pr.yml` runs `uv build` in `src/backend`.
+- [x] `ci-main.yml` runs `uv build` when `backend` changes.
+- [x] Both jobs are listed in `pr_complete.needs` and `main_complete.needs`.
+- [x] Neither job installs the `local` group.
 
 **Verification:**
 
-- [ ] `actionlint` accepts both workflow files.
-- [ ] `uv build` from `src/backend` produces a wheel locally.
+- [x] `actionlint` accepts both workflow files.
+- [x] `uv build` from `src/backend` produces a wheel locally.
 
 **Dependencies:** CI-01
 
