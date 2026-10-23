@@ -164,21 +164,21 @@ Backend CI does not wait on those specs. The package is already on `main`, and t
 ## CI-04: Typecheck the backend on a pull request
 
 **Id:** CI-04
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** `make check` includes pyright. The pull request gate runs `uv run pyright` from `src/backend` so CI is not weaker than the local check.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `ci-pr.yml` has a backend typecheck job that runs `uv run pyright` in `src/backend`.
-- [ ] The job does not install the `local` group.
-- [ ] The job is listed in `pr_complete.needs`.
+- [x] `ci-pr.yml` has a backend typecheck job that runs `uv run pyright` in `src/backend`.
+- [x] The job does not install the `local` group.
+- [x] The job is listed in `pr_complete.needs`.
 
 **Verification:**
 
-- [ ] `actionlint` accepts `.github/workflows/ci-pr.yml`.
+- [x] `actionlint` accepts `.github/workflows/ci-pr.yml`.
 
 **Dependencies:** CI-01
 
