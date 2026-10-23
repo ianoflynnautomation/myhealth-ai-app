@@ -191,23 +191,23 @@ Backend CI does not wait on those specs. The package is already on `main`, and t
 ## CI-05: Test the backend on a pull request and on main
 
 **Id:** CI-05
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** Run pytest from `src/backend` on pull requests and again on `main`. Upload JUnit XML the way the frontend unit job uploads its report. Do not start Docker or install the `local` group.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `ci-pr.yml` runs `uv run pytest --junitxml=test-results/pytest.xml` in `src/backend` and uploads that file.
-- [ ] `ci-main.yml` runs the same test command when `backend` changes.
-- [ ] Both jobs are listed in `pr_complete.needs` and `main_complete.needs`.
-- [ ] Neither job installs the `local` group.
+- [x] `ci-pr.yml` runs `uv run pytest --junitxml=test-results/pytest.xml` in `src/backend` and uploads that file.
+- [x] `ci-main.yml` runs the same test command when `backend` changes.
+- [x] Both jobs are listed in `pr_complete.needs` and `main_complete.needs`.
+- [x] Neither job installs the `local` group.
 
 **Verification:**
 
-- [ ] `actionlint` accepts both workflow files.
-- [ ] The pytest command does not select the `integration` marker.
+- [x] `actionlint` accepts both workflow files.
+- [x] The pytest command does not select the `integration` marker.
 
 **Dependencies:** CI-01
 
