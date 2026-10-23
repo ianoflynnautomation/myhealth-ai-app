@@ -17,5 +17,5 @@ Parser, corpus, and chat model are ports inside app-shell. Later modules do not 
 | Module id | Spec |
 | --- | --- |
 | app-shell | [SPEC-app-shell.md](SPEC-app-shell.md) |
-| chat-ui | Not written yet |
+| chat-ui | [SPEC-chat-ui.md](SPEC-chat-ui.md) |
 | local-runtime | Not written yet |
