@@ -273,19 +273,19 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-02: Proxy documents and chat to the API
 
 **Id:** CU-02
-**Completed:**
+**Completed:** 2026-10-23
 
 **Description:** In dev, Vite proxies `/documents` and `/chat` to `http://127.0.0.1:8000`. The page calls those relative paths. This task does not change the page.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `vite.config.ts` proxies `/documents` and `/chat` to `http://127.0.0.1:8000`.
+- [x] `vite.config.ts` proxies `/documents` and `/chat` to `http://127.0.0.1:8000`.
 
 **Verification:**
 
-- [ ] `npx vitest run src/api/devProxy.test.ts -t "should proxy"` from `src/frontend`.
+- [x] `npx vitest run src/api/devProxy.test.ts -t "should proxy"` from `src/frontend`.
 
 **Dependencies:** CU-CP1
 
