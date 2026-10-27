@@ -751,20 +751,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-08: Build the API image
 
 **Id:** LR-08
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add the API image at `src/backend/Dockerfile`. It installs the locked environment with `uv sync --frozen --no-dev --group local` and runs `fastapi run` on `0.0.0.0:8000`. It does not use `fastapi dev` and it does not install the dev group.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The Dockerfile installs the `local` group and does not install the dev group.
-- [ ] The process command is `fastapi run`, bound to `0.0.0.0:8000`.
+- [x] The Dockerfile installs the `local` group and does not install the dev group.
+- [x] The process command is `fastapi run`, bound to `0.0.0.0:8000`.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_api_image.py::test_the_api_image_should_install_the_local_group -q`
+- [x] `cd src/backend && uv run pytest tests/test_api_image.py::test_the_api_image_should_install_the_local_group -q`
 
 **Dependencies:** LR-CP2
 
