@@ -100,6 +100,11 @@ export function ChatPage() {
             }
           />
           <Transcript turns={turns} />
+          {chat.isError ? (
+            <p role="alert" className="text-destructive">
+              {chat.error.message}
+            </p>
+          ) : null}
         </CardContent>
         <CardFooter className="gap-2">
           <Textarea

@@ -253,4 +253,37 @@ describe('ChatPage', () => {
       screen.queryByRole('list', { name: 'Citations' }),
     ).not.toBeInTheDocument()
   })
+
+  it('the page should keep the typed question', async () => {
+    // Given
+    const user = userEvent.setup()
+    const question = 'What is the DemoMarker value?'
+    server.use(
+      http.post('/chat', () =>
+        HttpResponse.json(
+          {
+            error: {
+              code: 'INTERNAL_ERROR',
+              message: 'Internal server error.',
+              details: {},
+            },
+          },
+          { status: 500 },
+        ),
+      ),
+    )
+    renderWithProviders(<ChatPage />)
+    const message = screen.getByRole('textbox', { name: 'Message' })
+
+    // When
+    await user.type(message, question)
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    // Then
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Internal server error.',
+    )
+    expect(message).toHaveValue(question)
+    expect(screen.getByText('No messages yet.')).toBeInTheDocument()
+  })
 })

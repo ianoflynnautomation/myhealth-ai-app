@@ -524,20 +524,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-11: A failed question keeps the typed text
 
 **Id:** CU-11
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** A failed chat shows `error.message` and leaves the typed question in the message box.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] A 500 response shows `Internal server error.`
-- [ ] The message box still contains the question.
+- [x] A 500 response shows `Internal server error.`
+- [x] The message box still contains the question.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should keep the typed question"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should keep the typed question"` from `src/frontend`.
 
 **Dependencies:** CU-09
 
