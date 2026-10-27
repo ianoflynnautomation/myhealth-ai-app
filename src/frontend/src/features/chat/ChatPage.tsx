@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { SendHorizontal } from 'lucide-react'
 import {
@@ -26,6 +27,7 @@ export function ChatPage() {
     queryKey: ['documents'],
     queryFn: listDocuments,
   })
+  const [message, setMessage] = useState('')
   const upload = useMutation({
     mutationFn: uploadDocument,
     onSuccess: (document) => {
@@ -87,13 +89,17 @@ export function ChatPage() {
           <Textarea
             aria-label="Message"
             placeholder="Ask a question…"
+            value={message}
+            onChange={(event) => {
+              setMessage(event.target.value)
+            }}
             className="min-w-0 flex-1 resize-none"
           />
           <Button
             type="submit"
             size="icon"
             aria-label="Send"
-            disabled
+            disabled={message.trim() === ''}
             className="shrink-0"
           >
             <SendHorizontal />

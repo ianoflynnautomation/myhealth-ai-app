@@ -158,4 +158,29 @@ describe('ChatPage', () => {
     expect(screen.getByRole('listitem')).toHaveTextContent('notes.pdf')
     expect(screen.getByRole('listitem')).toHaveTextContent('2')
   })
+
+  it('the page should not send a blank question', async () => {
+    // Given
+    const user = userEvent.setup()
+    let posts = 0
+    server.use(
+      http.post('/chat', () => {
+        posts += 1
+        return HttpResponse.json({ outputText: 'nope', citations: [] })
+      }),
+    )
+    renderWithProviders(<ChatPage />)
+    const send = screen.getByRole('button', { name: 'Send' })
+    const message = screen.getByRole('textbox', { name: 'Message' })
+    expect(send).toBeDisabled()
+
+    // When
+    await user.type(message, '   ')
+
+    // Then
+    expect(send).toBeDisabled()
+    await user.clear(message)
+    expect(send).toBeDisabled()
+    expect(posts).toBe(0)
+  })
 })

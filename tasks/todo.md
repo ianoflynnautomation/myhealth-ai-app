@@ -440,20 +440,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-08: A blank question does not send
 
 **Id:** CU-08
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Send stays disabled while the trimmed message is empty. That message does not call `POST /chat`.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] Send is disabled for an empty message and for a message that is only spaces.
-- [ ] Neither case calls `POST /chat`.
+- [x] Send is disabled for an empty message and for a message that is only spaces.
+- [x] Neither case calls `POST /chat`.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should not send a blank question"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should not send a blank question"` from `src/frontend`.
 
 **Dependencies:** CU-04
 
