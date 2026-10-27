@@ -574,21 +574,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-02: Declare the local dependency group
 
 **Id:** LR-02
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add the `local` dependency group with `docling` and `qdrant-client`. `make check` and the backend CI jobs still install without that group.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `src/backend/pyproject.toml` has a `local` group that names `docling` and `qdrant-client`.
-- [ ] `make check` does not pass `--group local`.
-- [ ] The backend jobs in `ci-pr.yml` and `ci-main.yml` do not pass `--group local`.
+- [x] `src/backend/pyproject.toml` has a `local` group that names `docling` and `qdrant-client`.
+- [x] `make check` does not pass `--group local`.
+- [x] The backend jobs in `ci-pr.yml` and `ci-main.yml` do not pass `--group local`.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_local_group.py::test_the_local_group_should_stay_out_of_make_check -q`
+- [x] `cd src/backend && uv run pytest tests/test_local_group.py::test_the_local_group_should_stay_out_of_make_check -q`
 
 **Dependencies:** LR-CP1
 
