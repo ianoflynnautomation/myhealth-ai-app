@@ -807,21 +807,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-10: Compose the four services
 
 **Id:** LR-10
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add `compose.yaml` at the repo root with `web`, `api`, `qdrant`, and `ollama`. Host ports are bound to `127.0.0.1`. The API gets `PROFILE=local` and the five settings. `./data` is bind-mounted at `/data`. Image tags are pinned.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The API environment sets `PROFILE=local`, `QDRANT_URL=http://qdrant:6333`, `OLLAMA_BASE_URL=http://ollama:11434/v1`, `OLLAMA_CHAT_MODEL=llama3.1`, `OLLAMA_EMBED_MODEL=nomic-embed-text`, and `DATA_DIR=/data`.
-- [ ] Published ports are `127.0.0.1:8080`, `127.0.0.1:8000`, `127.0.0.1:6333`, and `127.0.0.1:11434`.
-- [ ] No image uses the tag `latest`.
+- [x] The API environment sets `PROFILE=local`, `QDRANT_URL=http://qdrant:6333`, `OLLAMA_BASE_URL=http://ollama:11434/v1`, `OLLAMA_CHAT_MODEL=llama3.1`, `OLLAMA_EMBED_MODEL=nomic-embed-text`, and `DATA_DIR=/data`.
+- [x] Published ports are `127.0.0.1:8080`, `127.0.0.1:8000`, `127.0.0.1:6333`, and `127.0.0.1:11434`.
+- [x] No image uses the tag `latest`.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_compose.py::test_compose_should_set_profile_local -q`
+- [x] `cd src/backend && uv run pytest tests/test_compose.py::test_compose_should_set_profile_local -q`
 
 **Dependencies:** LR-08, LR-09
 
