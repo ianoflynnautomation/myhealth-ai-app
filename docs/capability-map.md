@@ -6,7 +6,7 @@ The app parses medical PDFs, stores the text, and answers questions from that st
 | --- | --- | --- |
 | app-shell | The pipeline. Upload a PDF, parse it, store the file and the page chunks, answer a question with citations. Stub profile and local profile. | — |
 | chat-ui | Connect the existing React page to upload and chat. Show the answer and the citations. | app-shell |
-| local-runtime | Compose for Ollama and Qdrant, plus the API. Minikube profile using the same images. Ollama on the host at `host.minikube.internal:11434` unless the model later lives in the cluster. | app-shell |
+| local-runtime | Compose for Ollama and Qdrant, plus the API. The cluster is Flux GitOps under `gitops/`, one `Kustomization` per component. The Minikube overlay keeps Ollama on the host at `host.minikube.internal:11434`. The homelab overlay runs Ollama in the cluster as its own Helm release. | app-shell |
 
 Build order: app-shell → chat-ui and local-runtime.
 
@@ -18,4 +18,4 @@ Parser, corpus, and chat model are ports inside app-shell. Later modules do not 
 | --- | --- |
 | app-shell | [SPEC-app-shell.md](SPEC-app-shell.md) |
 | chat-ui | [SPEC-chat-ui.md](SPEC-chat-ui.md) |
-| local-runtime | Not written yet |
+| local-runtime | [SPEC-local-runtime.md](SPEC-local-runtime.md) |
