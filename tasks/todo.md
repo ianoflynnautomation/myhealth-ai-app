@@ -685,21 +685,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-06: Store and search pages through the corpus protocol
 
 **Id:** LR-06
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add a corpus that implements `StoredCorpus`. `add` embeds each page, upserts camelCase points, and returns `(StoredDocument, created)`. The same document id returns the existing document and does not upsert again. `search` embeds the question, runs the hybrid query, and returns `StoredChunk` values. Both methods are synchronous.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] One page becomes one point with id `{document_id}:{page_number}` and payload keys `sourceFile`, `sourcePage`, and `content`.
-- [ ] A second `add` of the same document id returns `created` false and does not upsert.
-- [ ] `search` returns the stored page text for the question.
+- [x] One page becomes one point with id `{document_id}:{page_number}` and payload keys `sourceFile`, `sourcePage`, and `content`.
+- [x] A second `add` of the same document id returns `created` false and does not upsert.
+- [x] `search` returns the stored page text for the question.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_local_corpus.py::test_the_local_corpus_should_return_the_stored_page -q`
+- [x] `cd src/backend && uv run pytest tests/test_local_corpus.py::test_the_local_corpus_should_return_the_stored_page -q`
 
 **Dependencies:** LR-04, LR-05
 
