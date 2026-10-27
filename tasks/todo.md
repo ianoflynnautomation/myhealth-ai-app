@@ -2,7 +2,7 @@
 
 Finished work: [tasks/app-shell.md](app-shell.md). Map: [docs/capability-map.md](../docs/capability-map.md).
 
-`chat-ui` has an approved spec: [docs/SPEC-chat-ui.md](../docs/SPEC-chat-ui.md). Plan: [tasks/plan-chat-ui.md](plan-chat-ui.md). `local-runtime` does not have a spec yet. LR-01 writes that spec. Implementation tasks for a module are added only after a human approves that spec.
+`chat-ui` has an approved spec: [docs/SPEC-chat-ui.md](../docs/SPEC-chat-ui.md). Plan: [tasks/plan-chat-ui.md](plan-chat-ui.md). `local-runtime` has an approved spec: [docs/SPEC-local-runtime.md](../docs/SPEC-local-runtime.md). Plan: [tasks/plan-local-runtime.md](plan-local-runtime.md).
 
 Backend CI is on `main`. The jobs mirror the frontend gates.
 
@@ -20,6 +20,10 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 | 3 | `ci/backend-check` | CI-01–CI-06 | backend CI |
 | 4 | `feature/chat-documents` | CU-02–CU-07 | chat-ui |
 | 5 | `feature/chat-answer` | CU-08–CU-11 | chat-ui |
+| 6 | `feature/local-boot` | LR-02–LR-07 | local-runtime |
+| 7 | `feature/compose-stack` | LR-08–LR-11 | local-runtime |
+| 8 | `feature/gitops-minikube` | LR-12–LR-17 | local-runtime |
+| 9 | `feature/gitops-homelab` | LR-18 | local-runtime |
 
 ## CU-01: Write the chat-ui spec
 
@@ -69,7 +73,7 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 
 **Verification:**
 
-- [ ] A human reviews the spec before any local-runtime implementation task is added.
+- [x] A human reviews the spec before any local-runtime implementation task is added.
 
 **Dependencies:** AS-CPB
 
@@ -561,8 +565,526 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-CP1: local-runtime spec approved
 
 **Id:** LR-CP1
+**Completed:** 2026-10-27
+
+- [x] LR-01 is merged.
+- [x] A human has approved `docs/SPEC-local-runtime.md`.
+- [x] Implementation tasks for local-runtime are added to this file only after that approval.
+
+## LR-02: Declare the local dependency group
+
+**Id:** LR-02
 **Completed:**
 
-- [ ] LR-01 is merged.
-- [ ] A human has approved `docs/SPEC-local-runtime.md`.
-- [ ] Implementation tasks for local-runtime are added to this file only after that approval.
+**Description:** Add the `local` dependency group with `docling` and `qdrant-client`. `make check` and the backend CI jobs still install without that group.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] `src/backend/pyproject.toml` has a `local` group that names `docling` and `qdrant-client`.
+- [ ] `make check` does not pass `--group local`.
+- [ ] The backend jobs in `ci-pr.yml` and `ci-main.yml` do not pass `--group local`.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_local_group.py::test_the_local_group_should_stay_out_of_make_check -q`
+
+**Dependencies:** LR-CP1
+
+**Files likely touched:**
+
+- `src/backend/pyproject.toml`
+- `src/backend/uv.lock`
+- `src/backend/tests/test_local_group.py`
+
+**Estimated scope:** Small
+
+## LR-03: Build the Docling converter without importing it on the stub path
+
+**Id:** LR-03
+**Completed:**
+
+**Description:** Add a factory that returns the `PageConverter` used by `DoclingParser`. Importing the module does not import `docling`. The import happens inside the factory, and a missing install still names `uv sync --group local`.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] Importing the factory module leaves `docling` out of `sys.modules`.
+- [ ] Calling the factory when `docling` is missing raises the existing sync hint.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_docling_factory.py::test_the_docling_factory_should_not_import_docling -q`
+
+**Dependencies:** LR-02
+
+**Files likely touched:**
+
+- `src/backend/src/health_api/documents/docling_factory.py`
+- `src/backend/tests/test_docling_factory.py`
+
+**Estimated scope:** Small
+
+## LR-04: Embed a text with the Ollama embeddings route
+
+**Id:** LR-04
+**Completed:**
+
+**Description:** Add a sync embeddings client. It posts `{base}/embeddings` with `nomic-embed-text` and returns the vector. Tests pass an `httpx` mock transport. The client does not open a port.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] The request URL is `{base}/embeddings` and the model is `nomic-embed-text`.
+- [ ] The returned value is the embedding vector from the response.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_ollama_embeddings.py::test_the_embed_client_should_post_the_text -q`
+
+**Dependencies:** LR-CP1
+
+**Files likely touched:**
+
+- `src/backend/src/health_api/documents/ollama_embeddings.py`
+- `src/backend/tests/test_ollama_embeddings.py`
+
+**Estimated scope:** Small
+
+## LR-05: Build the hybrid Qdrant query without importing the client
+
+**Id:** LR-05
+**Completed:**
+
+**Description:** Add a pure function that builds the hybrid query from the dense vector and the question text, using BM25 plus that vector. Add a wrapper that sends it through an injected client. Importing the module does not import `qdrant_client`. The collection name is `pages` and the dense size is 768.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] The query passed to the injected client contains the vector and the question text.
+- [ ] The collection size in that call is 768.
+- [ ] Importing the module leaves `qdrant_client` out of `sys.modules`.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_qdrant_query.py::test_the_hybrid_query_should_carry_the_text_and_the_vector -q`
+
+**Dependencies:** LR-CP1
+
+**Files likely touched:**
+
+- `src/backend/src/health_api/documents/qdrant_query.py`
+- `src/backend/tests/test_qdrant_query.py`
+
+**Estimated scope:** Small
+
+## LR-06: Store and search pages through the corpus protocol
+
+**Id:** LR-06
+**Completed:**
+
+**Description:** Add a corpus that implements `StoredCorpus`. `add` embeds each page, upserts camelCase points, and returns `(StoredDocument, created)`. The same document id returns the existing document and does not upsert again. `search` embeds the question, runs the hybrid query, and returns `StoredChunk` values. Both methods are synchronous.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] One page becomes one point with id `{document_id}:{page_number}` and payload keys `sourceFile`, `sourcePage`, and `content`.
+- [ ] A second `add` of the same document id returns `created` false and does not upsert.
+- [ ] `search` returns the stored page text for the question.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_local_corpus.py::test_the_local_corpus_should_return_the_stored_page -q`
+
+**Dependencies:** LR-04, LR-05
+
+**Files likely touched:**
+
+- `src/backend/src/health_api/documents/local_corpus.py`
+- `src/backend/tests/test_local_corpus.py`
+
+**Estimated scope:** Medium
+
+## LR-07: Wire the local profile from settings
+
+**Id:** LR-07
+**Completed:**
+
+**Description:** When `PROFILE=local` and no factories are passed, `create_app` builds the Docling parser, the local corpus, and the Ollama chat model from settings. A missing local group still raises the sync hint. Injected factories still win. The stub app still does not import `docling` or `qdrant_client`.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] `create_app` with local settings and no factories calls the three builders.
+- [ ] A missing `docling` or `qdrant_client` still names `uv sync --group local`.
+- [ ] Constructing the stub app does not import those modules.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_local_factory.py::test_the_local_profile_should_build_adapters_from_settings -q`
+
+**Dependencies:** LR-03, LR-06
+
+**Files likely touched:**
+
+- `src/backend/src/health_api/main.py`
+- `src/backend/tests/test_local_factory.py`
+
+**Estimated scope:** Small
+
+## LR-CP2: Local profile boots without Docker
+
+**Id:** LR-CP2
+**Completed:**
+
+- [ ] LR-02 through LR-07 are merged.
+- [ ] `cd src/backend && make check` passes.
+- [ ] That command does not start Docker and does not install the local group.
+- [ ] `POST /documents` and `POST /chat` are unchanged.
+
+## LR-08: Build the API image
+
+**Id:** LR-08
+**Completed:**
+
+**Description:** Add the API image at `src/backend/Dockerfile`. It installs the locked environment with `uv sync --frozen --no-dev --group local` and runs `fastapi run` on `0.0.0.0:8000`. It does not use `fastapi dev` and it does not install the dev group.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] The Dockerfile installs the `local` group and does not install the dev group.
+- [ ] The process command is `fastapi run`, bound to `0.0.0.0:8000`.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_api_image.py::test_the_api_image_should_install_the_local_group -q`
+
+**Dependencies:** LR-CP2
+
+**Files likely touched:**
+
+- `src/backend/Dockerfile`
+- `src/backend/tests/test_api_image.py`
+
+**Estimated scope:** Small
+
+## LR-09: Build the web image
+
+**Id:** LR-09
+**Completed:**
+
+**Description:** Add the web image at `src/frontend/Dockerfile`. It runs `npm run build` and nginx serves that build. Nginx proxies `/documents`, `/chat`, and `/health` to `http://api:8000`. No npm dependency is added.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] The image build runs `npm run build`.
+- [ ] The proxy targets are `/documents`, `/chat`, and `/health`.
+- [ ] `src/frontend/package.json` gains no dependency.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_web_image.py::test_the_web_image_should_proxy_the_api -q`
+
+**Dependencies:** LR-CP2
+
+**Files likely touched:**
+
+- `src/frontend/Dockerfile`
+- `src/frontend/nginx.conf`
+- `src/backend/tests/test_web_image.py`
+
+**Estimated scope:** Small
+
+## LR-10: Compose the four services
+
+**Id:** LR-10
+**Completed:**
+
+**Description:** Add `compose.yaml` at the repo root with `web`, `api`, `qdrant`, and `ollama`. Host ports are bound to `127.0.0.1`. The API gets `PROFILE=local` and the five settings. `./data` is bind-mounted at `/data`. Image tags are pinned.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] The API environment sets `PROFILE=local`, `QDRANT_URL=http://qdrant:6333`, `OLLAMA_BASE_URL=http://ollama:11434/v1`, `OLLAMA_CHAT_MODEL=llama3.1`, `OLLAMA_EMBED_MODEL=nomic-embed-text`, and `DATA_DIR=/data`.
+- [ ] Published ports are `127.0.0.1:8080`, `127.0.0.1:8000`, `127.0.0.1:6333`, and `127.0.0.1:11434`.
+- [ ] No image uses the tag `latest`.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_compose.py::test_compose_should_set_profile_local -q`
+
+**Dependencies:** LR-08, LR-09
+
+**Files likely touched:**
+
+- `compose.yaml`
+- `src/backend/tests/test_compose.py`
+
+**Estimated scope:** Medium
+
+## LR-11: Pull both Ollama models before the API starts
+
+**Id:** LR-11
+**Completed:**
+
+**Description:** The first Compose start pulls `llama3.1` and `nomic-embed-text` into the `ollama-models` volume. The API does not start until that pull has finished. `docker compose down -v` is the command that removes the volume. It does not delete the `./data` bind mount.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] The compose file names both models.
+- [ ] `api` waits for the model pull.
+- [ ] The Ollama volume is `ollama-models` and the Qdrant volume is `qdrant-data`.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_compose.py::test_compose_should_pull_the_two_models -q`
+
+**Dependencies:** LR-10
+
+**Files likely touched:**
+
+- `compose.yaml`
+- `src/backend/tests/test_compose.py`
+
+**Estimated scope:** Small
+
+## LR-CP3: Compose file matches the spec
+
+**Id:** LR-CP3
+**Completed:**
+
+- [ ] LR-08 through LR-11 are merged.
+- [ ] `cd src/backend && make check` passes without a Docker daemon.
+- [ ] The manual check `docker compose up --build` is still to be run. It is not part of this checkpoint's command.
+
+## LR-12: Watch this repo from the Minikube cluster
+
+**Id:** LR-12
+**Completed:**
+
+**Description:** Add `gitops/clusters/myhealth/sync.yaml`, its kustomization, and `ks.yaml`. `sync.yaml` is the `GitRepository` `flux-system` for this public repo on `main`, with no secret, and the `Kustomization` `flux-system` whose path is `./gitops/clusters/myhealth`. `ks.yaml` is the `Kustomization` `apps` whose path is `./gitops/apps/overlays/myhealth`, with `prune: true` and `wait: false`.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] `sync.yaml` names `flux-system` and contains no secret.
+- [ ] `apps` points at `./gitops/apps/overlays/myhealth`.
+- [ ] No `gotk-components.yaml` is added.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_gitops.py::test_sync_should_watch_this_repo_without_a_secret -q`
+
+**Dependencies:** LR-CP1
+
+**Files likely touched:**
+
+- `gitops/clusters/myhealth/sync.yaml`
+- `gitops/clusters/myhealth/kustomization.yaml`
+- `gitops/clusters/myhealth/ks.yaml`
+- `src/backend/tests/test_gitops.py`
+
+**Estimated scope:** Small
+
+## LR-13: Add the myhealth namespace
+
+**Id:** LR-13
+**Completed:**
+
+**Description:** Add the `myhealth` namespace. Enforce pod security `baseline`. Audit and warn at `restricted`. The base kustomization lists the namespace only.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] The namespace name is `myhealth`.
+- [ ] The three pod-security labels are `baseline`, `restricted`, and `restricted`.
+- [ ] The base kustomization does not list a component.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_gitops.py::test_the_namespace_should_enforce_baseline -q`
+
+**Dependencies:** LR-12
+
+**Files likely touched:**
+
+- `gitops/apps/base/myhealth/namespace.yaml`
+- `gitops/apps/base/myhealth/kustomization.yaml`
+- `src/backend/tests/test_gitops.py`
+
+**Estimated scope:** Small
+
+## LR-14: Run the API in the cluster
+
+**Id:** LR-14
+**Completed:**
+
+**Description:** Add the API Flux `Kustomization` and its Deployment, Service, `health-data` claim, and NetworkPolicy. The image is `myhealth-api:local` with `imagePullPolicy: IfNotPresent`. The Minikube environment sets `QDRANT_URL` to `http://qdrant.myhealth.svc.cluster.local:6333` and `OLLAMA_BASE_URL` to `http://host.minikube.internal:11434/v1`. Egress allows Qdrant and the host Ollama address.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] `PROFILE=local` and the five settings are set on the Deployment.
+- [ ] `OLLAMA_BASE_URL` is `http://host.minikube.internal:11434/v1`.
+- [ ] The claim name is `health-data` and it is mounted at `/data`.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_gitops.py::test_the_minikube_api_should_keep_ollama_on_the_host -q`
+
+**Dependencies:** LR-13
+
+**Files likely touched:**
+
+- `gitops/apps/base/myhealth/api/ks.yaml`
+- `gitops/apps/base/myhealth/api/app/kustomization.yaml`
+- `gitops/apps/base/myhealth/api/app/api.yaml`
+- `gitops/apps/base/myhealth/api/app/networkpolicy.yaml`
+- `src/backend/tests/test_gitops.py`
+
+**Estimated scope:** Medium
+
+## LR-15: Run the web page in the cluster
+
+**Id:** LR-15
+**Completed:**
+
+**Description:** Add the web Flux `Kustomization`, Deployment, and Service. The image is `myhealth-web:local` with `imagePullPolicy: IfNotPresent`. `web` depends on `api`. The NetworkPolicy allows `web` to call `api`.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] The image is `myhealth-web:local`.
+- [ ] The Flux `Kustomization` depends on `api`.
+- [ ] `prune` is true, `wait` is true, and `sourceRef.name` is `flux-system`.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_gitops.py::test_the_web_kustomization_should_depend_on_api -q`
+
+**Dependencies:** LR-14
+
+**Files likely touched:**
+
+- `gitops/apps/base/myhealth/web/ks.yaml`
+- `gitops/apps/base/myhealth/web/app/kustomization.yaml`
+- `gitops/apps/base/myhealth/web/app/web.yaml`
+- `gitops/apps/base/myhealth/web/app/networkpolicy.yaml`
+- `src/backend/tests/test_gitops.py`
+
+**Estimated scope:** Small
+
+## LR-16: Run Qdrant from its Helm chart
+
+**Id:** LR-16
+**Completed:**
+
+**Description:** Add the Qdrant Helm repository `https://qdrant.github.io/qdrant-helm`, a `HelmRelease` of chart `qdrant` with one replica, and its Flux `Kustomization`. The chart version is pinned. The release is not `latest`.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] The chart name is `qdrant` and the repository URL is `https://qdrant.github.io/qdrant-helm`.
+- [ ] The chart version is a pinned version.
+- [ ] `api` depends on `qdrant`.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_gitops.py::test_qdrant_should_be_a_pinned_helm_release -q`
+
+**Dependencies:** LR-14
+
+**Files likely touched:**
+
+- `gitops/apps/base/myhealth/qdrant/ks.yaml`
+- `gitops/apps/base/myhealth/qdrant/app/kustomization.yaml`
+- `gitops/apps/base/myhealth/qdrant/app/helmrepository.yaml`
+- `gitops/apps/base/myhealth/qdrant/app/helmrelease.yaml`
+- `src/backend/tests/test_gitops.py`
+
+**Estimated scope:** Small
+
+## LR-17: Point the Minikube overlay at api, web, and Qdrant
+
+**Id:** LR-17
+**Completed:**
+
+**Description:** Add `gitops/apps/overlays/myhealth`. It lists the base and the `ks.yaml` files for `api`, `web`, and `qdrant`. It does not list `ollama/ks.yaml`.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] The overlay lists `api/ks.yaml`, `web/ks.yaml`, and `qdrant/ks.yaml`.
+- [ ] The overlay does not list `ollama/ks.yaml`.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_gitops.py::test_the_myhealth_overlay_should_omit_ollama -q`
+
+**Dependencies:** LR-15, LR-16
+
+**Files likely touched:**
+
+- `gitops/apps/overlays/myhealth/kustomization.yaml`
+- `src/backend/tests/test_gitops.py`
+
+**Estimated scope:** Small
+
+## LR-18: Run Ollama on the homelab overlay
+
+**Id:** LR-18
+**Completed:**
+
+**Description:** Add the Ollama Helm release from `https://otwld.github.io/ollama-helm`, chart `ollama`, version pinned, with no model baked into an image we build. The release pulls `llama3.1` and `nomic-embed-text`. Add `gitops/apps/overlays/homelab`, which lists the Minikube components plus `ollama/ks.yaml`. The homelab API depends on `ollama`, sets `OLLAMA_BASE_URL` to `http://ollama.myhealth.svc.cluster.local:11434/v1`, and its NetworkPolicy allows the in-cluster Ollama Service and not the host.
+
+**Status:** open
+
+**Acceptance criteria:**
+
+- [ ] The homelab overlay lists `ollama/ks.yaml`.
+- [ ] The homelab API base URL is `http://ollama.myhealth.svc.cluster.local:11434/v1`.
+- [ ] The homelab API manifest does not contain `host.minikube.internal`.
+
+**Verification:**
+
+- [ ] `cd src/backend && uv run pytest tests/test_gitops.py::test_the_homelab_overlay_should_run_ollama -q`
+
+**Dependencies:** LR-17
+
+**Files likely touched:**
+
+- `gitops/apps/base/myhealth/ollama/ks.yaml`
+- `gitops/apps/base/myhealth/ollama/app/helmrelease.yaml`
+- `gitops/apps/overlays/homelab/kustomization.yaml`
+- `gitops/apps/overlays/homelab/api-patch.yaml`
+- `src/backend/tests/test_gitops.py`
+
+**Estimated scope:** Medium
+
+## LR-CP4: GitOps tree matches the spec
+
+**Id:** LR-CP4
+**Completed:**
+
+- [ ] LR-12 through LR-18 are merged.
+- [ ] `cd src/backend && make check` passes without a Docker daemon.
+- [ ] The manual Minikube check is still to be run. It does not `kubectl apply` a Deployment.
+- [ ] The homelab overlay is not applied to a shared cluster from this checkpoint.
