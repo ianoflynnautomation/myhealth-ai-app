@@ -19,15 +19,17 @@ export function Transcript({ turns }: { turns: TranscriptTurn[] }) {
         <li key={`${turn.question}-${index}`} className="space-y-2">
           <p className="text-foreground">{turn.question}</p>
           <p>{turn.answer.outputText}</p>
-          <ul aria-label="Citations" className="space-y-2">
-            {turn.answer.citations.map((citation) => (
-              <li key={citation.id}>
-                <span className="text-foreground">{citation.sourceFile}</span>{' '}
-                page {citation.sourcePage}
-                <span className="mt-1 block">{citation.content}</span>
-              </li>
-            ))}
-          </ul>
+          {turn.answer.citations.length > 0 ? (
+            <ul aria-label="Citations" className="space-y-2">
+              {turn.answer.citations.map((citation) => (
+                <li key={citation.id}>
+                  <span className="text-foreground">{citation.sourceFile}</span>{' '}
+                  page {citation.sourcePage}
+                  <span className="mt-1 block">{citation.content}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </li>
       ))}
     </ol>

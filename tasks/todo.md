@@ -497,20 +497,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-10: An empty citation list shows the fixed sentence
 
 **Id:** CU-10
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** When `citations` is empty, the page shows `outputText` and no citation list.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The page shows `No stored document answers that.`
-- [ ] The page shows no citation.
+- [x] The page shows `No stored document answers that.`
+- [x] The page shows no citation.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should show the fixed sentence"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should show the fixed sentence"` from `src/frontend`.
 
 **Dependencies:** CU-09
 

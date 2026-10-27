@@ -224,4 +224,33 @@ describe('ChatPage', () => {
     expect(citation).toHaveTextContent(sentence)
     expect(screen.queryByText('No messages yet.')).not.toBeInTheDocument()
   })
+
+  it('the page should show the fixed sentence', async () => {
+    // Given
+    const user = userEvent.setup()
+    server.use(
+      http.post('/chat', () =>
+        HttpResponse.json({
+          outputText: 'No stored document answers that.',
+          citations: [],
+        }),
+      ),
+    )
+    renderWithProviders(<ChatPage />)
+
+    // When
+    await user.type(
+      screen.getByRole('textbox', { name: 'Message' }),
+      'Where was the zebra?',
+    )
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    // Then
+    expect(
+      await screen.findByText('No stored document answers that.'),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('list', { name: 'Citations' }),
+    ).not.toBeInTheDocument()
+  })
 })
