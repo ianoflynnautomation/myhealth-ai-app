@@ -467,27 +467,28 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-09: The page shows the answer and the citation
 
 **Id:** CU-09
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** A question calls `POST /chat` with one user message. The page shows `outputText` and, for each citation, `sourceFile`, `sourcePage`, and `content`.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The request body is `{ "messages": [{ "role": "user", "content": "What is the DemoMarker value?" }] }`.
-- [ ] The page shows `DemoMarker value is 10 units.`
-- [ ] The citation shows `example.pdf`, page 1, and that same sentence.
+- [x] The request body is `{ "messages": [{ "role": "user", "content": "What is the DemoMarker value?" }] }`.
+- [x] The page shows `DemoMarker value is 10 units.`
+- [x] The citation shows `example.pdf`, page 1, and that same sentence.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should show the cited page"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should show the cited page"` from `src/frontend`.
 
 **Dependencies:** CU-08
 
 **Files likely touched:**
 
 - `src/frontend/src/api/chat.ts`
+- `src/frontend/src/features/chat/Transcript.tsx`
 - `src/frontend/src/features/chat/ChatPage.tsx`
 - `src/frontend/src/features/chat/__tests__/ChatPage.test.tsx`
 

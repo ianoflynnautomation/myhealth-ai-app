@@ -183,4 +183,45 @@ describe('ChatPage', () => {
     expect(send).toBeDisabled()
     expect(posts).toBe(0)
   })
+
+  it('the page should show the cited page', async () => {
+    // Given
+    const user = userEvent.setup()
+    const question = 'What is the DemoMarker value?'
+    const sentence = 'DemoMarker value is 10 units.'
+    let body: unknown
+    server.use(
+      http.post('/chat', async ({ request }) => {
+        body = await request.json()
+        return HttpResponse.json({
+          outputText: sentence,
+          citations: [
+            {
+              id: 'abc:1',
+              sourceFile: 'example.pdf',
+              sourcePage: 1,
+              content: sentence,
+            },
+          ],
+        })
+      }),
+    )
+    renderWithProviders(<ChatPage />)
+
+    // When
+    await user.type(screen.getByRole('textbox', { name: 'Message' }), question)
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    // Then
+    expect(await screen.findByText(question)).toBeInTheDocument()
+    expect(body).toEqual({
+      messages: [{ role: 'user', content: question }],
+    })
+    expect(screen.getAllByText(sentence)).toHaveLength(2)
+    const citation = screen.getByRole('list', { name: 'Citations' })
+    expect(citation).toHaveTextContent('example.pdf')
+    expect(citation).toHaveTextContent('page 1')
+    expect(citation).toHaveTextContent(sentence)
+    expect(screen.queryByText('No messages yet.')).not.toBeInTheDocument()
+  })
 })
