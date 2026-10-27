@@ -158,4 +158,132 @@ describe('ChatPage', () => {
     expect(screen.getByRole('listitem')).toHaveTextContent('notes.pdf')
     expect(screen.getByRole('listitem')).toHaveTextContent('2')
   })
+
+  it('the page should not send a blank question', async () => {
+    // Given
+    const user = userEvent.setup()
+    let posts = 0
+    server.use(
+      http.post('/chat', () => {
+        posts += 1
+        return HttpResponse.json({ outputText: 'nope', citations: [] })
+      }),
+    )
+    renderWithProviders(<ChatPage />)
+    const send = screen.getByRole('button', { name: 'Send' })
+    const message = screen.getByRole('textbox', { name: 'Message' })
+    expect(send).toBeDisabled()
+
+    // When
+    await user.type(message, '   ')
+
+    // Then
+    expect(send).toBeDisabled()
+    await user.clear(message)
+    expect(send).toBeDisabled()
+    expect(posts).toBe(0)
+  })
+
+  it('the page should show the cited page', async () => {
+    // Given
+    const user = userEvent.setup()
+    const question = 'What is the DemoMarker value?'
+    const sentence = 'DemoMarker value is 10 units.'
+    let body: unknown
+    server.use(
+      http.post('/chat', async ({ request }) => {
+        body = await request.json()
+        return HttpResponse.json({
+          outputText: sentence,
+          citations: [
+            {
+              id: 'abc:1',
+              sourceFile: 'example.pdf',
+              sourcePage: 1,
+              content: sentence,
+            },
+          ],
+        })
+      }),
+    )
+    renderWithProviders(<ChatPage />)
+
+    // When
+    await user.type(screen.getByRole('textbox', { name: 'Message' }), question)
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    // Then
+    expect(await screen.findByText(question)).toBeInTheDocument()
+    expect(body).toEqual({
+      messages: [{ role: 'user', content: question }],
+    })
+    expect(screen.getAllByText(sentence)).toHaveLength(2)
+    const citation = screen.getByRole('list', { name: 'Citations' })
+    expect(citation).toHaveTextContent('example.pdf')
+    expect(citation).toHaveTextContent('page 1')
+    expect(citation).toHaveTextContent(sentence)
+    expect(screen.queryByText('No messages yet.')).not.toBeInTheDocument()
+  })
+
+  it('the page should show the fixed sentence', async () => {
+    // Given
+    const user = userEvent.setup()
+    server.use(
+      http.post('/chat', () =>
+        HttpResponse.json({
+          outputText: 'No stored document answers that.',
+          citations: [],
+        }),
+      ),
+    )
+    renderWithProviders(<ChatPage />)
+
+    // When
+    await user.type(
+      screen.getByRole('textbox', { name: 'Message' }),
+      'Where was the zebra?',
+    )
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    // Then
+    expect(
+      await screen.findByText('No stored document answers that.'),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('list', { name: 'Citations' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('the page should keep the typed question', async () => {
+    // Given
+    const user = userEvent.setup()
+    const question = 'What is the DemoMarker value?'
+    server.use(
+      http.post('/chat', () =>
+        HttpResponse.json(
+          {
+            error: {
+              code: 'INTERNAL_ERROR',
+              message: 'Internal server error.',
+              details: {},
+            },
+          },
+          { status: 500 },
+        ),
+      ),
+    )
+    renderWithProviders(<ChatPage />)
+    const message = screen.getByRole('textbox', { name: 'Message' })
+
+    // When
+    await user.type(message, question)
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    // Then
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Internal server error.',
+    )
+    expect(message).toHaveValue(question)
+    expect(screen.getByText('No messages yet.')).toBeInTheDocument()
+  })
 })

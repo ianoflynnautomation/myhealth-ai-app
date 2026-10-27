@@ -440,20 +440,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-08: A blank question does not send
 
 **Id:** CU-08
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Send stays disabled while the trimmed message is empty. That message does not call `POST /chat`.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] Send is disabled for an empty message and for a message that is only spaces.
-- [ ] Neither case calls `POST /chat`.
+- [x] Send is disabled for an empty message and for a message that is only spaces.
+- [x] Neither case calls `POST /chat`.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should not send a blank question"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should not send a blank question"` from `src/frontend`.
 
 **Dependencies:** CU-04
 
@@ -467,27 +467,28 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-09: The page shows the answer and the citation
 
 **Id:** CU-09
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** A question calls `POST /chat` with one user message. The page shows `outputText` and, for each citation, `sourceFile`, `sourcePage`, and `content`.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The request body is `{ "messages": [{ "role": "user", "content": "What is the DemoMarker value?" }] }`.
-- [ ] The page shows `DemoMarker value is 10 units.`
-- [ ] The citation shows `example.pdf`, page 1, and that same sentence.
+- [x] The request body is `{ "messages": [{ "role": "user", "content": "What is the DemoMarker value?" }] }`.
+- [x] The page shows `DemoMarker value is 10 units.`
+- [x] The citation shows `example.pdf`, page 1, and that same sentence.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should show the cited page"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should show the cited page"` from `src/frontend`.
 
 **Dependencies:** CU-08
 
 **Files likely touched:**
 
 - `src/frontend/src/api/chat.ts`
+- `src/frontend/src/features/chat/Transcript.tsx`
 - `src/frontend/src/features/chat/ChatPage.tsx`
 - `src/frontend/src/features/chat/__tests__/ChatPage.test.tsx`
 
@@ -496,20 +497,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-10: An empty citation list shows the fixed sentence
 
 **Id:** CU-10
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** When `citations` is empty, the page shows `outputText` and no citation list.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The page shows `No stored document answers that.`
-- [ ] The page shows no citation.
+- [x] The page shows `No stored document answers that.`
+- [x] The page shows no citation.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should show the fixed sentence"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should show the fixed sentence"` from `src/frontend`.
 
 **Dependencies:** CU-09
 
@@ -523,20 +524,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## CU-11: A failed question keeps the typed text
 
 **Id:** CU-11
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** A failed chat shows `error.message` and leaves the typed question in the message box.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] A 500 response shows `Internal server error.`
-- [ ] The message box still contains the question.
+- [x] A 500 response shows `Internal server error.`
+- [x] The message box still contains the question.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should keep the typed question"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should keep the typed question"` from `src/frontend`.
 
 **Dependencies:** CU-09
 
