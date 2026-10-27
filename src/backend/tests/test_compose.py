@@ -42,3 +42,20 @@ def test_compose_should_set_profile_local() -> None:
     for image in images:
         assert ":" in image
         assert not image.endswith(":latest")
+
+
+def test_compose_should_pull_the_two_models() -> None:
+    # Given
+    text = _COMPOSE.read_text()
+    api = text.split("\n  api:\n", 1)[1].split("\n  qdrant:\n", 1)[0]
+
+    # When
+    pulls = [line.strip() for line in text.splitlines() if "ollama pull " in line]
+
+    # Then
+    assert any("ollama pull llama3.1" in line for line in pulls)
+    assert any("ollama pull nomic-embed-text" in line for line in pulls)
+    assert "model-pull" in api
+    assert "service_completed_successfully" in api
+    assert "ollama-models:" in text
+    assert "qdrant-data:" in text

@@ -835,21 +835,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-11: Pull both Ollama models before the API starts
 
 **Id:** LR-11
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** The first Compose start pulls `llama3.1` and `nomic-embed-text` into the `ollama-models` volume. The API does not start until that pull has finished. `docker compose down -v` is the command that removes the volume. It does not delete the `./data` bind mount.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The compose file names both models.
-- [ ] `api` waits for the model pull.
-- [ ] The Ollama volume is `ollama-models` and the Qdrant volume is `qdrant-data`.
+- [x] The compose file names both models.
+- [x] `api` waits for the model pull.
+- [x] The Ollama volume is `ollama-models` and the Qdrant volume is `qdrant-data`.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_compose.py::test_compose_should_pull_the_two_models -q`
+- [x] `cd src/backend && uv run pytest tests/test_compose.py::test_compose_should_pull_the_two_models -q`
 
 **Dependencies:** LR-10
 

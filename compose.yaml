@@ -26,8 +26,10 @@ services:
     volumes:
       - ./data:/data
     depends_on:
-      - qdrant
-      - ollama
+      qdrant:
+        condition: service_started
+      model-pull:
+        condition: service_completed_successfully
 
   qdrant:
     image: qdrant/qdrant:v1.20.0
@@ -42,6 +44,19 @@ services:
       - "127.0.0.1:11434:11434"
     volumes:
       - ollama-models:/root/.ollama
+
+  model-pull:
+    image: ollama/ollama:0.40.11
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        until ollama pull llama3.1; do sleep 2; done
+        ollama pull nomic-embed-text
+    depends_on:
+      - ollama
+    restart: "no"
 
 volumes:
   qdrant-data:
