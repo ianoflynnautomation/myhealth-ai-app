@@ -657,21 +657,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-05: Build the hybrid Qdrant query without importing the client
 
 **Id:** LR-05
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add a pure function that builds the hybrid query from the dense vector and the question text, using BM25 plus that vector. Add a wrapper that sends it through an injected client. Importing the module does not import `qdrant_client`. The collection name is `pages` and the dense size is 768.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The query passed to the injected client contains the vector and the question text.
-- [ ] The collection size in that call is 768.
-- [ ] Importing the module leaves `qdrant_client` out of `sys.modules`.
+- [x] The query passed to the injected client contains the vector and the question text.
+- [x] The collection size in that call is 768.
+- [x] Importing the module leaves `qdrant_client` out of `sys.modules`.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_qdrant_query.py::test_the_hybrid_query_should_carry_the_text_and_the_vector -q`
+- [x] `cd src/backend && uv run pytest tests/test_qdrant_query.py::test_the_hybrid_query_should_carry_the_text_and_the_vector -q`
 
 **Dependencies:** LR-CP1
 
