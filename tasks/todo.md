@@ -778,21 +778,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-09: Build the web image
 
 **Id:** LR-09
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add the web image at `src/frontend/Dockerfile`. It runs `npm run build` and nginx serves that build. Nginx proxies `/documents`, `/chat`, and `/health` to `http://api:8000`. No npm dependency is added.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The image build runs `npm run build`.
-- [ ] The proxy targets are `/documents`, `/chat`, and `/health`.
-- [ ] `src/frontend/package.json` gains no dependency.
+- [x] The image build runs `npm run build`.
+- [x] The proxy targets are `/documents`, `/chat`, and `/health`.
+- [x] `src/frontend/package.json` gains no dependency.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_web_image.py::test_the_web_image_should_proxy_the_api -q`
+- [x] `cd src/backend && uv run pytest tests/test_web_image.py::test_the_web_image_should_proxy_the_api -q`
 
 **Dependencies:** LR-CP2
 
