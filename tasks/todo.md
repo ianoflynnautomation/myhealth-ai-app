@@ -574,21 +574,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-02: Declare the local dependency group
 
 **Id:** LR-02
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add the `local` dependency group with `docling` and `qdrant-client`. `make check` and the backend CI jobs still install without that group.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `src/backend/pyproject.toml` has a `local` group that names `docling` and `qdrant-client`.
-- [ ] `make check` does not pass `--group local`.
-- [ ] The backend jobs in `ci-pr.yml` and `ci-main.yml` do not pass `--group local`.
+- [x] `src/backend/pyproject.toml` has a `local` group that names `docling` and `qdrant-client`.
+- [x] `make check` does not pass `--group local`.
+- [x] The backend jobs in `ci-pr.yml` and `ci-main.yml` do not pass `--group local`.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_local_group.py::test_the_local_group_should_stay_out_of_make_check -q`
+- [x] `cd src/backend && uv run pytest tests/test_local_group.py::test_the_local_group_should_stay_out_of_make_check -q`
 
 **Dependencies:** LR-CP1
 
@@ -603,20 +603,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-03: Build the Docling converter without importing it on the stub path
 
 **Id:** LR-03
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add a factory that returns the `PageConverter` used by `DoclingParser`. Importing the module does not import `docling`. The import happens inside the factory, and a missing install still names `uv sync --group local`.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] Importing the factory module leaves `docling` out of `sys.modules`.
-- [ ] Calling the factory when `docling` is missing raises the existing sync hint.
+- [x] Importing the factory module leaves `docling` out of `sys.modules`.
+- [x] Calling the factory when `docling` is missing raises the existing sync hint.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_docling_factory.py::test_the_docling_factory_should_not_import_docling -q`
+- [x] `cd src/backend && uv run pytest tests/test_docling_factory.py::test_the_docling_factory_should_not_import_docling -q`
 
 **Dependencies:** LR-02
 
@@ -630,20 +630,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-04: Embed a text with the Ollama embeddings route
 
 **Id:** LR-04
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add a sync embeddings client. It posts `{base}/embeddings` with `nomic-embed-text` and returns the vector. Tests pass an `httpx` mock transport. The client does not open a port.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The request URL is `{base}/embeddings` and the model is `nomic-embed-text`.
-- [ ] The returned value is the embedding vector from the response.
+- [x] The request URL is `{base}/embeddings` and the model is `nomic-embed-text`.
+- [x] The returned value is the embedding vector from the response.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_ollama_embeddings.py::test_the_embed_client_should_post_the_text -q`
+- [x] `cd src/backend && uv run pytest tests/test_ollama_embeddings.py::test_the_embed_client_should_post_the_text -q`
 
 **Dependencies:** LR-CP1
 
@@ -657,21 +657,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-05: Build the hybrid Qdrant query without importing the client
 
 **Id:** LR-05
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add a pure function that builds the hybrid query from the dense vector and the question text, using BM25 plus that vector. Add a wrapper that sends it through an injected client. Importing the module does not import `qdrant_client`. The collection name is `pages` and the dense size is 768.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The query passed to the injected client contains the vector and the question text.
-- [ ] The collection size in that call is 768.
-- [ ] Importing the module leaves `qdrant_client` out of `sys.modules`.
+- [x] The query passed to the injected client contains the vector and the question text.
+- [x] The collection size in that call is 768.
+- [x] Importing the module leaves `qdrant_client` out of `sys.modules`.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_qdrant_query.py::test_the_hybrid_query_should_carry_the_text_and_the_vector -q`
+- [x] `cd src/backend && uv run pytest tests/test_qdrant_query.py::test_the_hybrid_query_should_carry_the_text_and_the_vector -q`
 
 **Dependencies:** LR-CP1
 
@@ -685,21 +685,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-06: Store and search pages through the corpus protocol
 
 **Id:** LR-06
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add a corpus that implements `StoredCorpus`. `add` embeds each page, upserts camelCase points, and returns `(StoredDocument, created)`. The same document id returns the existing document and does not upsert again. `search` embeds the question, runs the hybrid query, and returns `StoredChunk` values. Both methods are synchronous.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] One page becomes one point with id `{document_id}:{page_number}` and payload keys `sourceFile`, `sourcePage`, and `content`.
-- [ ] A second `add` of the same document id returns `created` false and does not upsert.
-- [ ] `search` returns the stored page text for the question.
+- [x] One page becomes one point with id `{document_id}:{page_number}` and payload keys `sourceFile`, `sourcePage`, and `content`.
+- [x] A second `add` of the same document id returns `created` false and does not upsert.
+- [x] `search` returns the stored page text for the question.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_local_corpus.py::test_the_local_corpus_should_return_the_stored_page -q`
+- [x] `cd src/backend && uv run pytest tests/test_local_corpus.py::test_the_local_corpus_should_return_the_stored_page -q`
 
 **Dependencies:** LR-04, LR-05
 
@@ -713,21 +713,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-07: Wire the local profile from settings
 
 **Id:** LR-07
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** When `PROFILE=local` and no factories are passed, `create_app` builds the Docling parser, the local corpus, and the Ollama chat model from settings. A missing local group still raises the sync hint. Injected factories still win. The stub app still does not import `docling` or `qdrant_client`.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `create_app` with local settings and no factories calls the three builders.
-- [ ] A missing `docling` or `qdrant_client` still names `uv sync --group local`.
-- [ ] Constructing the stub app does not import those modules.
+- [x] `create_app` with local settings and no factories calls the three builders.
+- [x] A missing `docling` or `qdrant_client` still names `uv sync --group local`.
+- [x] Constructing the stub app does not import those modules.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_local_factory.py::test_the_local_profile_should_build_adapters_from_settings -q`
+- [x] `cd src/backend && uv run pytest tests/test_local_factory.py::test_the_local_profile_should_build_adapters_from_settings -q`
 
 **Dependencies:** LR-03, LR-06
 
