@@ -1,13 +1,20 @@
 import importlib
 import os
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 
+import httpx
 from fastapi import FastAPI
 
+from health_api.chat.ollama_chat_model import Citation, OllamaChatModel
 from health_api.config import Settings
+from health_api.documents.docling_factory import docling_converter
+from health_api.documents.docling_parser import DoclingParser
+from health_api.documents.local_corpus import LocalCorpus
 from health_api.documents.memory_corpus import MemoryCorpus, StoredCorpus
+from health_api.documents.ollama_embeddings import OllamaEmbeddings
 from health_api.documents.parser import Parser
-from health_api.http.chat import ChatModel, register_chat
+from health_api.documents.qdrant_index import qdrant_index
+from health_api.http.chat import ChatModel, CitationResponse, register_chat
 from health_api.http.documents import register_documents
 
 
@@ -28,7 +35,12 @@ def create_app(
     if settings.profile == "local":
         if parser_factory is None or corpus_factory is None or chat_model_factory is None:
             _require_local_group()
-            raise RuntimeError("local adapters are required")
+        if parser_factory is None:
+            parser_factory = _parser_from_settings
+        if corpus_factory is None:
+            corpus_factory = _corpus_from_settings
+        if chat_model_factory is None:
+            chat_model_factory = _chat_from_settings
         parser = parser_factory(settings)
         active_corpus = corpus_factory(settings)
         chat_model = chat_model_factory(settings)
@@ -46,6 +58,43 @@ def create_app(
     if chat_enabled:
         register_chat(app, active_corpus, chat_model=chat_model)
     return app
+
+
+def _required(value: str | None) -> str:
+    if value is None or value.strip() == "":
+        raise RuntimeError("local settings are incomplete")
+    return value
+
+
+def _parser_from_settings(_settings: Settings) -> Parser:
+    return DoclingParser(docling_converter())
+
+
+def _corpus_from_settings(settings: Settings) -> StoredCorpus:
+    embeddings = OllamaEmbeddings(
+        base_url=_required(settings.ollama_base_url),
+        model=_required(settings.ollama_embed_model),
+        transport=httpx.HTTPTransport(),
+    )
+    return LocalCorpus(embedder=embeddings, index=qdrant_index(_required(settings.qdrant_url)))
+
+
+class _OllamaChat:
+    def __init__(self, model: OllamaChatModel) -> None:
+        self._model = model
+
+    async def answer(self, query: str, citations: Sequence[CitationResponse]) -> str:
+        quoted = [Citation(content=citation.content) for citation in citations]
+        return await self._model.answer(query, quoted)
+
+
+def _chat_from_settings(settings: Settings) -> ChatModel:
+    model = OllamaChatModel(
+        base_url=_required(settings.ollama_base_url),
+        model=_required(settings.ollama_chat_model),
+        transport=httpx.AsyncHTTPTransport(),
+    )
+    return _OllamaChat(model)
 
 
 def _require_local_group() -> None:

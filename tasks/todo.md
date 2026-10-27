@@ -713,21 +713,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-07: Wire the local profile from settings
 
 **Id:** LR-07
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** When `PROFILE=local` and no factories are passed, `create_app` builds the Docling parser, the local corpus, and the Ollama chat model from settings. A missing local group still raises the sync hint. Injected factories still win. The stub app still does not import `docling` or `qdrant_client`.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `create_app` with local settings and no factories calls the three builders.
-- [ ] A missing `docling` or `qdrant_client` still names `uv sync --group local`.
-- [ ] Constructing the stub app does not import those modules.
+- [x] `create_app` with local settings and no factories calls the three builders.
+- [x] A missing `docling` or `qdrant_client` still names `uv sync --group local`.
+- [x] Constructing the stub app does not import those modules.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_local_factory.py::test_the_local_profile_should_build_adapters_from_settings -q`
+- [x] `cd src/backend && uv run pytest tests/test_local_factory.py::test_the_local_profile_should_build_adapters_from_settings -q`
 
 **Dependencies:** LR-03, LR-06
 

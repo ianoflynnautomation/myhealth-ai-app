@@ -4,6 +4,7 @@ from collections.abc import Sequence
 import pytest
 from fastapi.testclient import TestClient
 
+import health_api.main as main
 from health_api.config import Settings
 from health_api.documents.memory_corpus import StoredChunk, StoredDocument
 from health_api.documents.text_layer_parser import ParsedPage
@@ -138,3 +139,38 @@ def test_a_missing_local_install_should_name_the_sync_command() -> None:
     # Then
     assert "docling" not in sys.modules
     assert "qdrant_client" not in sys.modules
+
+
+@pytest.mark.unit
+def test_the_local_profile_should_build_adapters_from_settings(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Given
+    settings = _local_settings()
+    built: list[str] = []
+
+    def parser_from_settings(given: Settings) -> _Parser:
+        assert given is settings
+        built.append("parser")
+        return _Parser()
+
+    def corpus_from_settings(given: Settings) -> _Corpus:
+        assert given is settings
+        built.append("corpus")
+        return _Corpus()
+
+    def chat_from_settings(given: Settings) -> _ChatModel:
+        assert given is settings
+        built.append("chat")
+        return _ChatModel()
+
+    monkeypatch.setattr(main, "_require_local_group", lambda: None)
+    monkeypatch.setattr(main, "_parser_from_settings", parser_from_settings)
+    monkeypatch.setattr(main, "_corpus_from_settings", corpus_from_settings)
+    monkeypatch.setattr(main, "_chat_from_settings", chat_from_settings)
+
+    # When
+    create_app(settings)
+
+    # Then
+    assert built == ["parser", "corpus", "chat"]
