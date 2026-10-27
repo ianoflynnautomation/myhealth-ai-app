@@ -630,20 +630,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-04: Embed a text with the Ollama embeddings route
 
 **Id:** LR-04
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add a sync embeddings client. It posts `{base}/embeddings` with `nomic-embed-text` and returns the vector. Tests pass an `httpx` mock transport. The client does not open a port.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The request URL is `{base}/embeddings` and the model is `nomic-embed-text`.
-- [ ] The returned value is the embedding vector from the response.
+- [x] The request URL is `{base}/embeddings` and the model is `nomic-embed-text`.
+- [x] The returned value is the embedding vector from the response.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_ollama_embeddings.py::test_the_embed_client_should_post_the_text -q`
+- [x] `cd src/backend && uv run pytest tests/test_ollama_embeddings.py::test_the_embed_client_should_post_the_text -q`
 
 **Dependencies:** LR-CP1
 
