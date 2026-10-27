@@ -741,30 +741,30 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-CP2: Local profile boots without Docker
 
 **Id:** LR-CP2
-**Completed:**
+**Completed:** 2026-10-27
 
-- [ ] LR-02 through LR-07 are merged.
-- [ ] `cd src/backend && make check` passes.
-- [ ] That command does not start Docker and does not install the local group.
-- [ ] `POST /documents` and `POST /chat` are unchanged.
+- [x] LR-02 through LR-07 are merged.
+- [x] `cd src/backend && make check` passes.
+- [x] That command does not start Docker and does not install the local group.
+- [x] `POST /documents` and `POST /chat` are unchanged.
 
 ## LR-08: Build the API image
 
 **Id:** LR-08
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add the API image at `src/backend/Dockerfile`. It installs the locked environment with `uv sync --frozen --no-dev --group local` and runs `fastapi run` on `0.0.0.0:8000`. It does not use `fastapi dev` and it does not install the dev group.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The Dockerfile installs the `local` group and does not install the dev group.
-- [ ] The process command is `fastapi run`, bound to `0.0.0.0:8000`.
+- [x] The Dockerfile installs the `local` group and does not install the dev group.
+- [x] The process command is `fastapi run`, bound to `0.0.0.0:8000`.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_api_image.py::test_the_api_image_should_install_the_local_group -q`
+- [x] `cd src/backend && uv run pytest tests/test_api_image.py::test_the_api_image_should_install_the_local_group -q`
 
 **Dependencies:** LR-CP2
 
@@ -778,21 +778,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-09: Build the web image
 
 **Id:** LR-09
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add the web image at `src/frontend/Dockerfile`. It runs `npm run build` and nginx serves that build. Nginx proxies `/documents`, `/chat`, and `/health` to `http://api:8000`. No npm dependency is added.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The image build runs `npm run build`.
-- [ ] The proxy targets are `/documents`, `/chat`, and `/health`.
-- [ ] `src/frontend/package.json` gains no dependency.
+- [x] The image build runs `npm run build`.
+- [x] The proxy targets are `/documents`, `/chat`, and `/health`.
+- [x] `src/frontend/package.json` gains no dependency.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_web_image.py::test_the_web_image_should_proxy_the_api -q`
+- [x] `cd src/backend && uv run pytest tests/test_web_image.py::test_the_web_image_should_proxy_the_api -q`
 
 **Dependencies:** LR-CP2
 
@@ -807,21 +807,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-10: Compose the four services
 
 **Id:** LR-10
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add `compose.yaml` at the repo root with `web`, `api`, `qdrant`, and `ollama`. Host ports are bound to `127.0.0.1`. The API gets `PROFILE=local` and the five settings. `./data` is bind-mounted at `/data`. Image tags are pinned.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The API environment sets `PROFILE=local`, `QDRANT_URL=http://qdrant:6333`, `OLLAMA_BASE_URL=http://ollama:11434/v1`, `OLLAMA_CHAT_MODEL=llama3.1`, `OLLAMA_EMBED_MODEL=nomic-embed-text`, and `DATA_DIR=/data`.
-- [ ] Published ports are `127.0.0.1:8080`, `127.0.0.1:8000`, `127.0.0.1:6333`, and `127.0.0.1:11434`.
-- [ ] No image uses the tag `latest`.
+- [x] The API environment sets `PROFILE=local`, `QDRANT_URL=http://qdrant:6333`, `OLLAMA_BASE_URL=http://ollama:11434/v1`, `OLLAMA_CHAT_MODEL=llama3.1`, `OLLAMA_EMBED_MODEL=nomic-embed-text`, and `DATA_DIR=/data`.
+- [x] Published ports are `127.0.0.1:8080`, `127.0.0.1:8000`, `127.0.0.1:6333`, and `127.0.0.1:11434`.
+- [x] No image uses the tag `latest`.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_compose.py::test_compose_should_set_profile_local -q`
+- [x] `cd src/backend && uv run pytest tests/test_compose.py::test_compose_should_set_profile_local -q`
 
 **Dependencies:** LR-08, LR-09
 
@@ -835,21 +835,21 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-11: Pull both Ollama models before the API starts
 
 **Id:** LR-11
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** The first Compose start pulls `llama3.1` and `nomic-embed-text` into the `ollama-models` volume. The API does not start until that pull has finished. `docker compose down -v` is the command that removes the volume. It does not delete the `./data` bind mount.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] The compose file names both models.
-- [ ] `api` waits for the model pull.
-- [ ] The Ollama volume is `ollama-models` and the Qdrant volume is `qdrant-data`.
+- [x] The compose file names both models.
+- [x] `api` waits for the model pull.
+- [x] The Ollama volume is `ollama-models` and the Qdrant volume is `qdrant-data`.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_compose.py::test_compose_should_pull_the_two_models -q`
+- [x] `cd src/backend && uv run pytest tests/test_compose.py::test_compose_should_pull_the_two_models -q`
 
 **Dependencies:** LR-10
 
