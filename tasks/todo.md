@@ -56,7 +56,7 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 **Id:** LR-01
 **Completed:** 2026-10-27
 
-**Description:** Specify Compose for Ollama, Qdrant, and the API, and a Minikube profile that uses the same images. Ollama stays on the host at `host.minikube.internal:11434` unless the spec chooses a different place and says why. This task does not add Compose files or a cluster manifest.
+**Description:** Specify Compose for Ollama, Qdrant, and the API, and Flux GitOps for the same images. The Minikube overlay keeps Ollama on the host at `host.minikube.internal:11434`. The homelab overlay runs Ollama as its own Helm release. This task does not add Compose files or a cluster manifest.
 
 **Status:** done
 
