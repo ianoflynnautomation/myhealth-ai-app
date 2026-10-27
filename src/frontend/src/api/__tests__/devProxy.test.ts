@@ -1,4 +1,4 @@
-import configSource from '../../vite.config.ts?raw'
+import configSource from '../../../vite.config.ts?raw'
 import { devProxy } from '@/api/devProxy'
 
 describe('dev proxy', () => {

@@ -285,14 +285,14 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 
 **Verification:**
 
-- [x] `npx vitest run src/api/devProxy.test.ts -t "should proxy"` from `src/frontend`.
+- [x] `npx vitest run src/api/__tests__/devProxy.test.ts -t "should proxy"` from `src/frontend`.
 
 **Dependencies:** CU-CP1
 
 **Files likely touched:**
 
 - `src/frontend/vite.config.ts`
-- `src/frontend/src/api/devProxy.test.ts`
+- `src/frontend/src/api/__tests__/devProxy.test.ts`
 
 **Estimated scope:** Small
 
@@ -314,7 +314,7 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 
 **Verification:**
 
-- [x] `npx vitest run src/api/documents.test.ts -t "should post the file"` from `src/frontend`.
+- [x] `npx vitest run src/api/__tests__/documents.test.ts -t "should post the file"` from `src/frontend`.
 
 **Dependencies:** CU-CP1
 
@@ -322,7 +322,7 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 
 - `src/frontend/src/api/documents.ts`
 - `src/frontend/src/api/errors.ts`
-- `src/frontend/src/api/documents.test.ts`
+- `src/frontend/src/api/__tests__/documents.test.ts`
 
 **Estimated scope:** Small
 
@@ -343,15 +343,15 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 
 **Verification:**
 
-- [x] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should list a stored pdf"` from `src/frontend`.
-- [x] `npx vitest run src/app/App.test.tsx -t "renders the chat page"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should list a stored pdf"` from `src/frontend`.
+- [x] `npx vitest run src/app/__tests__/App.test.tsx -t "renders the chat page"` from `src/frontend`.
 
 **Dependencies:** CU-03
 
 **Files likely touched:**
 
 - `src/frontend/src/features/chat/ChatPage.tsx`
-- `src/frontend/src/features/chat/ChatPage.test.tsx`
+- `src/frontend/src/features/chat/__tests__/ChatPage.test.tsx`
 - `src/frontend/src/test/server.ts`
 
 **Estimated scope:** Small
@@ -372,14 +372,14 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 
 **Verification:**
 
-- [x] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should not call an empty store"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should not call an empty store"` from `src/frontend`.
 
 **Dependencies:** CU-04
 
 **Files likely touched:**
 
 - `src/frontend/src/features/chat/ChatPage.tsx`
-- `src/frontend/src/features/chat/ChatPage.test.tsx`
+- `src/frontend/src/features/chat/__tests__/ChatPage.test.tsx`
 
 **Estimated scope:** Small
 
@@ -399,14 +399,14 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 
 **Verification:**
 
-- [x] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should show an uploaded pdf once"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should show an uploaded pdf once"` from `src/frontend`.
 
 **Dependencies:** CU-03, CU-04
 
 **Files likely touched:**
 
 - `src/frontend/src/features/chat/ChatPage.tsx`
-- `src/frontend/src/features/chat/ChatPage.test.tsx`
+- `src/frontend/src/features/chat/__tests__/ChatPage.test.tsx`
 
 **Estimated scope:** Small
 
@@ -426,14 +426,14 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 
 **Verification:**
 
-- [x] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should show the upload error"` from `src/frontend`.
+- [x] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should show the upload error"` from `src/frontend`.
 
 **Dependencies:** CU-06
 
 **Files likely touched:**
 
 - `src/frontend/src/features/chat/ChatPage.tsx`
-- `src/frontend/src/features/chat/ChatPage.test.tsx`
+- `src/frontend/src/features/chat/__tests__/ChatPage.test.tsx`
 
 **Estimated scope:** Small
 
@@ -453,14 +453,14 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should not send a blank question"` from `src/frontend`.
+- [ ] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should not send a blank question"` from `src/frontend`.
 
 **Dependencies:** CU-04
 
 **Files likely touched:**
 
 - `src/frontend/src/features/chat/ChatPage.tsx`
-- `src/frontend/src/features/chat/ChatPage.test.tsx`
+- `src/frontend/src/features/chat/__tests__/ChatPage.test.tsx`
 
 **Estimated scope:** Small
 
@@ -481,7 +481,7 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should show the cited page"` from `src/frontend`.
+- [ ] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should show the cited page"` from `src/frontend`.
 
 **Dependencies:** CU-08
 
@@ -489,7 +489,7 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 
 - `src/frontend/src/api/chat.ts`
 - `src/frontend/src/features/chat/ChatPage.tsx`
-- `src/frontend/src/features/chat/ChatPage.test.tsx`
+- `src/frontend/src/features/chat/__tests__/ChatPage.test.tsx`
 
 **Estimated scope:** Medium
 
@@ -509,14 +509,14 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should show the fixed sentence"` from `src/frontend`.
+- [ ] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should show the fixed sentence"` from `src/frontend`.
 
 **Dependencies:** CU-09
 
 **Files likely touched:**
 
 - `src/frontend/src/features/chat/ChatPage.tsx`
-- `src/frontend/src/features/chat/ChatPage.test.tsx`
+- `src/frontend/src/features/chat/__tests__/ChatPage.test.tsx`
 
 **Estimated scope:** Small
 
@@ -536,14 +536,14 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 
 **Verification:**
 
-- [ ] `npx vitest run src/features/chat/ChatPage.test.tsx -t "should keep the typed question"` from `src/frontend`.
+- [ ] `npx vitest run src/features/chat/__tests__/ChatPage.test.tsx -t "should keep the typed question"` from `src/frontend`.
 
 **Dependencies:** CU-09
 
 **Files likely touched:**
 
 - `src/frontend/src/features/chat/ChatPage.tsx`
-- `src/frontend/src/features/chat/ChatPage.test.tsx`
+- `src/frontend/src/features/chat/__tests__/ChatPage.test.tsx`
 
 **Estimated scope:** Small
 

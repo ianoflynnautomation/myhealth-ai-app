@@ -77,14 +77,14 @@ server: {
 src/frontend/src/
   app/App.tsx                         # route / stays ChatPage
   features/chat/ChatPage.tsx          # the page
-  features/chat/ChatPage.test.tsx     # page behavior
+  features/chat/__tests__/ChatPage.test.tsx
   api/documents.ts                    # GET and POST /documents
   api/chat.ts                         # POST /chat
   api/errors.ts                       # read the error envelope
 vite.config.ts                        # dev proxy
 ```
 
-Implementation may split the page into smaller components under `features/chat/`. Tests stay next to the code as `*.test.tsx`. `src/components/ui/` stays vendored. This spec does not edit those files.
+Implementation may split the page into smaller components under `features/chat/`. Tests live in a `__tests__` folder next to the code. `src/components/ui/` stays vendored. This spec does not edit those files.
 
 ## Code style
 

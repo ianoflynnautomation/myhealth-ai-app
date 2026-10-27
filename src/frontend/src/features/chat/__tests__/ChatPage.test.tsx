@@ -13,6 +13,33 @@ const stored = {
 }
 
 describe('ChatPage', () => {
+  it('the page should show that documents are loading', async () => {
+    // Given
+    let release: () => void = () => {
+      throw new Error('The document list was not held.')
+    }
+    const pending = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    server.use(
+      http.get('/documents', async () => {
+        await pending
+        return HttpResponse.json({ documents: [] })
+      }),
+    )
+
+    // When
+    renderWithProviders(<ChatPage />)
+
+    // Then
+    expect(
+      screen.getByRole('status', { name: 'Loading documents' }),
+    ).toHaveAttribute('aria-busy', 'true')
+    expect(screen.queryByText('No documents yet.')).not.toBeInTheDocument()
+    release()
+    expect(await screen.findByText('No documents yet.')).toBeInTheDocument()
+  })
+
   it('the page should list a stored pdf', async () => {
     // Given
     server.use(

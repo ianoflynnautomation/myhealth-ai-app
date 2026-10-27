@@ -14,7 +14,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { DocumentList } from '@/features/chat/DocumentList'
 
 /** Chat page. Lists stored PDFs and will send a question to POST /chat. */
 export function ChatPage() {
@@ -41,17 +44,19 @@ export function ChatPage() {
       <Card>
         <CardHeader>
           <CardTitle>
-            <h1>MyHealth AI</h1>
+            <h1 className="text-xl leading-snug">MyHealth AI</h1>
           </CardTitle>
           <CardDescription>Ask questions about your documents.</CardDescription>
         </CardHeader>
-        <CardContent className="min-h-48 space-y-3 text-sm text-muted-foreground">
-          <label className="block text-foreground">
-            Upload PDF
-            <input
+        <CardContent className="min-h-48 space-y-3 text-sm">
+          <div className="space-y-2">
+            <Label htmlFor="upload-pdf" className="text-foreground">
+              Upload PDF
+            </Label>
+            <Input
+              id="upload-pdf"
               type="file"
               accept="application/pdf,.pdf"
-              className="mt-1 block w-full"
               disabled={upload.isPending}
               onChange={(event) => {
                 const file = event.currentTarget.files?.[0]
@@ -61,32 +66,36 @@ export function ChatPage() {
                 }
               }}
             />
-          </label>
-          {upload.isError ? <p role="alert">{upload.error.message}</p> : null}
-          {documents.isError ? (
-            <p role="alert">{documents.error.message}</p>
+          </div>
+          {upload.isError ? (
+            <p role="alert" className="text-destructive">
+              {upload.error.message}
+            </p>
           ) : null}
-          {documents.isSuccess && documents.data.length === 0 ? (
-            <p>No documents yet.</p>
-          ) : null}
-          {documents.isSuccess && documents.data.length > 0 ? (
-            <ul>
-              {documents.data.map((document) => (
-                <li key={document.id}>
-                  {document.sourceFile} {document.pageCount}
-                </li>
-              ))}
-            </ul>
-          ) : null}
-          <p>No messages yet.</p>
+          <DocumentList
+            documents={documents.data}
+            isPending={documents.isPending}
+            errorMessage={
+              documents.isError ? documents.error.message : undefined
+            }
+          />
+          <output className="block text-muted-foreground">
+            No messages yet.
+          </output>
         </CardContent>
         <CardFooter className="gap-2">
           <Textarea
             aria-label="Message"
             placeholder="Ask a question…"
-            className="resize-none"
+            className="min-w-0 flex-1 resize-none"
           />
-          <Button type="submit" size="icon" aria-label="Send" disabled>
+          <Button
+            type="submit"
+            size="icon"
+            aria-label="Send"
+            disabled
+            className="shrink-0"
+          >
             <SendHorizontal />
           </Button>
         </CardFooter>

@@ -18,7 +18,7 @@ npm run lint           # oxlint && eslint .   (lint:fix to autofix)
 npm run format         # prettier --write .   (format:check in CI)
 npm test               # vitest run           (test:watch, test:coverage)
 npm run check          # typecheck + lint + format:check + test, the full gate
-npx vitest run src/app/App.test.tsx -t "renders"   # single file / single test
+npx vitest run src/app/__tests__/App.test.tsx -t "renders"   # single file / single test
 ```
 
 - **UI**: shadcn/ui (`radix-nova` style) on Tailwind v4. Add components with `npx shadcn@latest add <name>`. Generated code in `src/components/ui/` is vendored. It is excluded from Prettier and the type-aware ESLint rules, so don't hand-reformat it. `cn` comes from shadcn's `cn` package, not clsx/tailwind-merge.
@@ -26,7 +26,7 @@ npx vitest run src/app/App.test.tsx -t "renders"   # single file / single test
 - **Imports**: use the `@/` alias for `src/` (set in `tsconfig.json`, `tsconfig.app.json` and `vite.config.ts`).
 - **Layout**: `app/` (App, providers, routes), `features/<name>/` (feature code), `components/ui/` (shadcn), `lib/`, `test/`.
 - **Linting**: oxlint runs first (correctness, suspicious, jsx-a11y, import, vitest). ESLint adds only typescript-eslint `strictTypeChecked` and react-hooks. `eslint-plugin-oxlint` turns off the overlapping rules. `eslint-plugin-jsx-a11y` is not used, because it doesn't support ESLint 10. a11y comes from oxlint.
-- **Tests**: Vitest (jsdom, globals) + Testing Library + MSW 3 (`onUnhandledFrame: 'error'`, so mock every request). Put tests next to the code as `*.test.tsx`. Render with `renderWithProviders` from `@/test/render`, and add network mocks with `server.use(...)` from `@/test/server`.
+- **Tests**: Vitest (jsdom, globals) + Testing Library + MSW 3 (`onUnhandledFrame: 'error'`, so mock every request). Put tests in a `__tests__` folder next to the code, named `*.test.ts` or `*.test.tsx`. Render with `renderWithProviders` from `@/test/render`, and add network mocks with `server.use(...)` from `@/test/server`.
 - **Git hooks**: husky (hooks dir `src/frontend/.husky`, installed by `npm install` via `prepare`) runs lint-staged on commit.
 
 ## Intended architecture
