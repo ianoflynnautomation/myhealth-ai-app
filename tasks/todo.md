@@ -603,20 +603,20 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-03: Build the Docling converter without importing it on the stub path
 
 **Id:** LR-03
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Add a factory that returns the `PageConverter` used by `DoclingParser`. Importing the module does not import `docling`. The import happens inside the factory, and a missing install still names `uv sync --group local`.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] Importing the factory module leaves `docling` out of `sys.modules`.
-- [ ] Calling the factory when `docling` is missing raises the existing sync hint.
+- [x] Importing the factory module leaves `docling` out of `sys.modules`.
+- [x] Calling the factory when `docling` is missing raises the existing sync hint.
 
 **Verification:**
 
-- [ ] `cd src/backend && uv run pytest tests/test_docling_factory.py::test_the_docling_factory_should_not_import_docling -q`
+- [x] `cd src/backend && uv run pytest tests/test_docling_factory.py::test_the_docling_factory_should_not_import_docling -q`
 
 **Dependencies:** LR-02
 
