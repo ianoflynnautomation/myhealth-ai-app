@@ -54,18 +54,18 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-01: Write the local-runtime spec
 
 **Id:** LR-01
-**Completed:**
+**Completed:** 2026-10-27
 
 **Description:** Specify Compose for Ollama, Qdrant, and the API, and a Minikube profile that uses the same images. Ollama stays on the host at `host.minikube.internal:11434` unless the spec chooses a different place and says why. This task does not add Compose files or a cluster manifest.
 
-**Status:** open
+**Status:** done
 
 **Acceptance criteria:**
 
-- [ ] `docs/SPEC-local-runtime.md` states the objective, commands, project structure, code style, testing strategy, boundaries, and success criteria.
-- [ ] The spec names how the API container gets `PROFILE=local` and the service URLs. It does not change the app-shell HTTP contract.
-- [ ] A live stack is out of `make check`. The spec says which check runs it.
-- [ ] [docs/capability-map.md](../docs/capability-map.md) links this spec.
+- [x] `docs/SPEC-local-runtime.md` states the objective, commands, project structure, code style, testing strategy, boundaries, and success criteria.
+- [x] The spec names how the API container gets `PROFILE=local` and the service URLs. It does not change the app-shell HTTP contract.
+- [x] A live stack is out of `make check`. The spec says which check runs it.
+- [x] [docs/capability-map.md](../docs/capability-map.md) links this spec.
 
 **Verification:**
 
