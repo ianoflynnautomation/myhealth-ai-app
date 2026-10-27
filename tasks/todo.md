@@ -741,12 +741,12 @@ Backend CI is on `main`. The jobs mirror the frontend gates.
 ## LR-CP2: Local profile boots without Docker
 
 **Id:** LR-CP2
-**Completed:**
+**Completed:** 2026-10-27
 
-- [ ] LR-02 through LR-07 are merged.
-- [ ] `cd src/backend && make check` passes.
-- [ ] That command does not start Docker and does not install the local group.
-- [ ] `POST /documents` and `POST /chat` are unchanged.
+- [x] LR-02 through LR-07 are merged.
+- [x] `cd src/backend && make check` passes.
+- [x] That command does not start Docker and does not install the local group.
+- [x] `POST /documents` and `POST /chat` are unchanged.
 
 ## LR-08: Build the API image
 
