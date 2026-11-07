@@ -1,6 +1,7 @@
 import importlib
 import os
 from collections.abc import Callable, Sequence
+from pathlib import Path
 
 import httpx
 from fastapi import FastAPI
@@ -13,6 +14,7 @@ from health_api.documents.local_corpus import LocalCorpus
 from health_api.documents.memory_corpus import MemoryCorpus, StoredCorpus
 from health_api.documents.ollama_embeddings import OllamaEmbeddings
 from health_api.documents.parser import Parser
+from health_api.documents.pdf_store import DirectoryPdfStore, PdfStore
 from health_api.documents.qdrant_index import qdrant_index
 from health_api.http.chat import ChatModel, CitationResponse, register_chat
 from health_api.http.documents import register_documents
@@ -32,6 +34,7 @@ def create_app(
     app = FastAPI()
     parser: Parser | None
     chat_model: ChatModel | None
+    pdf_store: PdfStore | None
     if settings.profile == "local":
         if parser_factory is None or corpus_factory is None or chat_model_factory is None:
             _require_local_group()
@@ -44,9 +47,11 @@ def create_app(
         parser = parser_factory(settings)
         active_corpus = corpus_factory(settings)
         chat_model = chat_model_factory(settings)
+        pdf_store = DirectoryPdfStore(Path(_required(settings.data_dir)))
     else:
         parser = None
         chat_model = None
+        pdf_store = None
         active_corpus = MemoryCorpus() if corpus is None else corpus
 
     @app.get("/health")
@@ -54,7 +59,7 @@ def create_app(
         return {"status": "ok"}
 
     if documents_enabled:
-        register_documents(app, active_corpus, parser=parser)
+        register_documents(app, active_corpus, parser=parser, pdf_store=pdf_store)
     if chat_enabled:
         register_chat(app, active_corpus, chat_model=chat_model)
     return app

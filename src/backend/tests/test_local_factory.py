@@ -1,5 +1,7 @@
+import hashlib
 import sys
 from collections.abc import Sequence
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -12,14 +14,14 @@ from health_api.http.chat import CitationResponse
 from health_api.main import create_app
 
 
-def _local_settings() -> Settings:
+def _local_settings(data_dir: str = "../../data") -> Settings:
     return Settings(
         profile="local",
         qdrant_url="http://127.0.0.1:6333",
         ollama_base_url="http://127.0.0.1:11434/v1",
         ollama_chat_model="llama3.1",
         ollama_embed_model="nomic-embed-text",
-        data_dir="../../data",
+        data_dir=data_dir,
     )
 
 
@@ -73,9 +75,9 @@ class _ChatModel:
 
 
 @pytest.mark.acceptance
-def test_the_local_factory_should_use_injected_adapters() -> None:
+def test_the_local_factory_should_use_injected_adapters(tmp_path: Path) -> None:
     # Given
-    settings = _local_settings()
+    settings = _local_settings(str(tmp_path))
     parser = _Parser()
     corpus = _Corpus()
     chat_model = _ChatModel()
@@ -124,6 +126,31 @@ def test_the_local_factory_should_use_injected_adapters() -> None:
     assert corpus.queries == ["What is the DemoMarker value?"]
     assert chat_model.queries == ["What is the DemoMarker value?"]
     assert chat_model.contents == ["DemoMarker value is 10 units."]
+
+
+@pytest.mark.acceptance
+def test_the_local_profile_should_keep_the_pdf_in_data_dir(tmp_path: Path) -> None:
+    # Given
+    settings = _local_settings(str(tmp_path / "data"))
+    pdf = b"%PDF-1.7 synthetic"
+    app = create_app(
+        settings,
+        parser_factory=lambda _settings: _Parser(),
+        corpus_factory=lambda _settings: _Corpus(),
+        chat_model_factory=lambda _settings: _ChatModel(),
+    )
+    client = TestClient(app)
+
+    # When
+    first = client.post("/documents", files={"file": ("example.pdf", pdf, "application/pdf")})
+    second = client.post("/documents", files={"file": ("copy.pdf", pdf, "application/pdf")})
+
+    # Then
+    assert first.status_code == 201
+    assert second.status_code == 201
+    kept = tmp_path / "data" / f"{hashlib.sha256(pdf).hexdigest()}.pdf"
+    assert kept.read_bytes() == pdf
+    assert [path.name for path in (tmp_path / "data").iterdir()] == [kept.name]
 
 
 @pytest.mark.unit

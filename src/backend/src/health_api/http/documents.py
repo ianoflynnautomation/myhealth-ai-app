@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 from health_api.documents.memory_corpus import StoredCorpus
 from health_api.documents.parser import Parser
+from health_api.documents.pdf_store import PdfStore
 from health_api.documents.text_layer_parser import parse_text_layer
 from health_api.http.errors import ApiError, register_error_handler
 
@@ -22,7 +23,13 @@ class DocumentListResponse(BaseModel):
     documents: list[DocumentResponse]
 
 
-def register_documents(app: FastAPI, corpus: StoredCorpus, *, parser: Parser | None = None) -> None:
+def register_documents(
+    app: FastAPI,
+    corpus: StoredCorpus,
+    *,
+    parser: Parser | None = None,
+    pdf_store: PdfStore | None = None,
+) -> None:
     register_error_handler(app)
 
     @app.get("/documents")
@@ -51,8 +58,11 @@ def register_documents(app: FastAPI, corpus: StoredCorpus, *, parser: Parser | N
             pages = await parser.parse(file_name=name, data=data)
         if not any(page.text.strip() for page in pages):
             raise ApiError(422, "VALIDATION_ERROR", "PDF has no text layer.")
+        document_id = hashlib.sha256(data).hexdigest()
+        if pdf_store is not None:
+            pdf_store.keep(document_id=document_id, data=data)
         stored, created = corpus.add(
-            document_id=hashlib.sha256(data).hexdigest(),
+            document_id=document_id,
             source_file=file.filename or "upload.pdf",
             pages=pages,
         )
