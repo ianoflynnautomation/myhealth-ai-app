@@ -51,3 +51,39 @@ def test_the_namespace_should_enforce_baseline() -> None:
     assert "pod-security.kubernetes.io/warn: restricted" in namespace
     assert "namespace.yaml" in listing
     assert "ks.yaml" not in listing
+
+
+def test_the_base_api_should_allow_qdrant_and_dns_only() -> None:
+    # Given
+    flux = _text("apps/base/myhealth/api/ks.yaml")
+    api = _text("apps/base/myhealth/api/app/api.yaml")
+    policy = _text("apps/base/myhealth/api/app/networkpolicy.yaml")
+
+    # When
+    listing = _text("apps/base/myhealth/api/app/kustomization.yaml")
+
+    # Then
+    assert "path: ./gitops/apps/base/myhealth/api/app" in flux
+    assert "targetNamespace: myhealth" in flux
+    assert "image: myhealth-api:local" in api
+    assert "imagePullPolicy: IfNotPresent" in api
+    for setting in (
+        "name: PROFILE\n              value: local",
+        "name: QDRANT_URL\n              value: http://qdrant.myhealth.svc.cluster.local:6333",
+        "name: OLLAMA_CHAT_MODEL\n              value: llama3.1",
+        "name: OLLAMA_EMBED_MODEL\n              value: nomic-embed-text",
+        "name: DATA_DIR\n              value: /data",
+    ):
+        assert setting in api
+    assert "name: OLLAMA_BASE_URL" not in api
+    assert "claimName: health-data" in api
+    assert "mountPath: /data" in api
+    assert "app.kubernetes.io/name: qdrant" in policy
+    assert "port: 6333" in policy
+    assert "k8s-app: kube-dns" in policy
+    assert "protocol: UDP" in policy
+    assert "port: 53" in policy
+    assert "ipBlock" not in policy
+    assert "ollama" not in policy
+    for name in ("api.yaml", "networkpolicy.yaml"):
+        assert name in listing
