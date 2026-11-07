@@ -129,3 +129,22 @@ def test_qdrant_should_be_a_pinned_helm_release() -> None:
     assert version is not None
     assert re.fullmatch(r"\d+\.\d+\.\d+", version.group(1))
     assert "- name: qdrant" in api.split("dependsOn:", 1)[1]
+
+
+def test_every_component_kustomization_should_prune_wait_and_use_flux_system() -> None:
+    # Given
+    paths = sorted((_GITOPS / "apps/base/myhealth").glob("*/ks.yaml"))
+
+    # When
+    texts = {path.parent.name: path.read_text() for path in paths}
+
+    # Then
+    assert {"api", "web", "qdrant"} <= texts.keys()
+    for name, text in texts.items():
+        assert "apiVersion: kustomize.toolkit.fluxcd.io/v1" in text, name
+        assert "kind: Kustomization" in text, name
+        assert f"name: {name}\n  namespace: flux-system" in text, name
+        assert "prune: true" in text, name
+        assert "wait: true" in text, name
+        assert "kind: GitRepository\n    name: flux-system" in text, name
+        assert "targetNamespace: myhealth" in text, name
