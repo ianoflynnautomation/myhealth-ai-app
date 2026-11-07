@@ -148,3 +148,25 @@ def test_every_component_kustomization_should_prune_wait_and_use_flux_system() -
         assert "wait: true" in text, name
         assert "kind: GitRepository\n    name: flux-system" in text, name
         assert "targetNamespace: myhealth" in text, name
+
+
+def test_the_myhealth_overlay_should_omit_ollama_and_patch_the_host() -> None:
+    # Given
+    overlay = _text("apps/overlays/myhealth/kustomization.yaml")
+    patch = _text("apps/overlays/myhealth/api-patch.yaml")
+
+    # When
+    cidr = re.search(r"cidr: (\S+)", patch)
+
+    # Then
+    for component in ("api", "web", "qdrant"):
+        assert f"../../base/myhealth/{component}/ks.yaml" in overlay
+    assert "ollama" not in overlay
+    assert "path: api-patch.yaml" in overlay
+    assert "kind: Kustomization\nmetadata:\n  name: api\n  namespace: flux-system" in patch
+    assert "value: http://host.minikube.internal:11434/v1" in patch
+    assert "path: /spec/template/spec/containers/0/env/-" in patch
+    assert "path: /spec/egress/-" in patch
+    assert "port: 11434" in patch
+    assert cidr is not None
+    assert cidr.group(1).endswith("/32")
