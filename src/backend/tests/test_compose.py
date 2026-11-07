@@ -59,3 +59,26 @@ def test_compose_should_pull_the_two_models() -> None:
     assert "service_completed_successfully" in api
     assert "ollama-models:" in text
     assert "qdrant-data:" in text
+
+
+def test_compose_should_publish_on_localhost_only() -> None:
+    # Given
+    lines = _COMPOSE.read_text().splitlines()
+
+    # When
+    published: list[str] = []
+    in_ports = False
+    for line in lines:
+        stripped = line.strip()
+        if stripped == "ports:":
+            in_ports = True
+            continue
+        if in_ports and stripped.startswith("- "):
+            published.append(stripped[2:].strip().strip("\"'"))
+            continue
+        in_ports = False
+
+    # Then
+    assert published
+    for port in published:
+        assert port.startswith("127.0.0.1:"), port
