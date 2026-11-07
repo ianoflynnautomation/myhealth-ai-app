@@ -1,6 +1,6 @@
 # Capability map
 
-The app parses medical PDFs, stores the text, and answers questions from that store. Module ids stay as they are written here. Specs are one module at a time, in build order.
+The app parses medical PDFs, stores the text, and answers questions from that store. Module ids stay as they are written here. Each module is one spec-kit feature in `specs/NNN-<module id>/`, specified one at a time, in build order. The rules every module follows are in [.specify/memory/constitution.md](../.specify/memory/constitution.md).
 
 | Module id | Responsibility | Depends on |
 | --- | --- | --- |
@@ -10,12 +10,14 @@ The app parses medical PDFs, stores the text, and answers questions from that st
 
 Build order: app-shell → chat-ui and local-runtime.
 
-`chat-ui` and `local-runtime` can be specified in parallel after app-shell. They do not call each other.
+`chat-ui` and `local-runtime` can be specified in parallel after app-shell. They don't call each other.
 
-Parser, corpus, and chat model are ports inside app-shell. Later modules do not re-define them.
+Parser, corpus, and chat model are ports inside app-shell. Later modules don't redefine them. The HTTP contract is [specs/001-app-shell/contracts/http.md](../specs/001-app-shell/contracts/http.md).
 
-| Module id | Spec |
-| --- | --- |
-| app-shell | [SPEC-app-shell.md](SPEC-app-shell.md) |
-| chat-ui | [SPEC-chat-ui.md](SPEC-chat-ui.md) |
-| local-runtime | [SPEC-local-runtime.md](SPEC-local-runtime.md) |
+| Module id | Feature | Status |
+| --- | --- | --- |
+| app-shell | [specs/001-app-shell](../specs/001-app-shell/spec.md) | Implemented |
+| chat-ui | [specs/002-chat-ui](../specs/002-chat-ui/spec.md) | Implemented. Manual check open |
+| local-runtime | [specs/003-local-runtime](../specs/003-local-runtime/spec.md) | In progress |
+
+A new module gets a row here first, then `/speckit-specify` creates the next `specs/NNN-<module id>/`.

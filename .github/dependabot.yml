@@ -1,0 +1,55 @@
+version: 2
+updates:
+
+  - package-ecosystem: npm
+    directory: /src/frontend
+    schedule:
+      interval: weekly
+      day: tuesday
+    open-pull-requests-limit: 10
+    labels:
+      - area/dependencies
+      - area/frontend
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      react:
+        patterns:
+          - "react*"
+          - "@types/react*"
+      tanstack:
+        patterns:
+          - "@tanstack/*"
+      vite:
+        patterns:
+          - "vite*"
+          - "@vitejs/*"
+          - "@tailwindcss/vite"
+      testing:
+        patterns:
+          - "vitest*"
+          - "@vitest/*"
+          - "@testing-library/*"
+          - "msw"
+          - "jsdom"
+      lint:
+        patterns:
+          - "eslint*"
+          - "@eslint/*"
+          - "typescript-eslint"
+          - "oxlint"
+          - "prettier*"
+
+  # Bumps the pinned action and bjjeire-ci-templates SHAs in .github/workflows.
+  - package-ecosystem: github-actions
+    directories:
+      - /
+    schedule:
+      interval: weekly
+      day: wednesday
+    labels:
+      - area/dependencies
+      - area/ci
+    commit-message:
+      prefix: ci
