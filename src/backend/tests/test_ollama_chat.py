@@ -85,3 +85,26 @@ def test_ollama_should_return_the_model_text() -> None:
 
     # Then
     assert text == "cited answer"
+
+
+def test_ollama_should_wait_for_a_cold_model() -> None:
+    # Given
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return _response()
+
+    model = OllamaChatModel(
+        base_url=OLLAMA_BASE_URL,
+        model=OLLAMA_CHAT_MODEL,
+        transport=httpx.MockTransport(handler),
+    )
+
+    # When
+    asyncio.run(model.answer("What is the DemoMarker value?", []))
+
+    # Then
+    timeout = seen[0].extensions["timeout"]
+    assert timeout["read"] == 300.0
+    assert timeout["connect"] == 5.0

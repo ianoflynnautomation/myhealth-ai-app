@@ -7,6 +7,9 @@ from dataclasses import dataclass
 
 import httpx
 
+# A cold llama3.1 on CPU takes longer than httpx's 5 s default to load and answer.
+_TIMEOUT = httpx.Timeout(300.0, connect=5.0)
+
 
 @dataclass(frozen=True)
 class Citation:
@@ -21,7 +24,7 @@ class OllamaChatModel:
 
     async def answer(self, query: str, citations: list[Citation]) -> str:
         content = "\n".join([query, *(citation.content for citation in citations)])
-        async with httpx.AsyncClient(transport=self._transport) as client:
+        async with httpx.AsyncClient(transport=self._transport, timeout=_TIMEOUT) as client:
             response = await client.post(
                 f"{self._base_url.rstrip('/')}/chat/completions",
                 json={

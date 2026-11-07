@@ -34,7 +34,9 @@ description: "Tasks for local-runtime, migrated from the LR section of tasks/tod
 - [X] T012 [US2] Keep each uploaded PDF as `DATA_DIR/<id>.pdf` in the local profile, once per id, in src/backend/src/health_api/documents/pdf_store.py, src/backend/src/health_api/http/documents.py and src/backend/src/health_api/main.py, tested by src/backend/tests/test_local_factory.py::test_the_local_profile_should_keep_the_pdf_in_data_dir (LR-19, FR-017, 2026-11-07)
 - [X] T013 [US1] Guard that every published Compose port binds `127.0.0.1`, not only the four expected ones (the volumes, `./data` and pinned tags were already covered by T010 and T011), in src/backend/tests/test_compose.py::test_compose_should_publish_on_localhost_only (LR-20, FR-005, 2026-11-07; RED shown by unbinding the qdrant port, then reverted)
 - [X] T014 [US1] Merge `feature/compose-stack` and confirm `cd src/backend && make check` passes with no Docker daemon (LR-CP3, 2026-11-07, PR #22; LR-19 and LR-20 follow in `feature/local-data-dir`)
-- [X] T015 [US2] Run the Compose manual check in specs/003-local-runtime/plan.md (SC-001, SC-004; run by the maintainer 2026-11-07, reported complete)
+- [X] T026 [US2] Declare the `content` text index with BM25 scoring on every start, so an existing `pages` collection is upgraded too, in src/backend/src/health_api/documents/qdrant_index.py, tested by src/backend/tests/test_qdrant_index.py::test_an_existing_collection_should_get_a_bm25_scored_text_index (LR-22, 2026-11-07; found by T015, listed here out of numeric order so the later T-numbers stay stable)
+- [X] T027 [US2] Give the Ollama chat call a 300 s read timeout (connect stays 5 s), because a cold `llama3.1` on CPU takes longer than httpx's 5 s default, in src/backend/src/health_api/chat/ollama_chat_model.py, tested by src/backend/tests/test_ollama_chat.py::test_ollama_should_wait_for_a_cold_model (LR-23, 2026-11-07; found by T015 after T026)
+- [ ] T015 [US2] Run the Compose manual check in specs/003-local-runtime/plan.md and record the date and result here (SC-001, SC-004). Reopened 2026-11-07: the stack started and an upload was stored, but the first question returned 500 because the Qdrant text index had no BM25 scoring. After T026 the search worked, but the chat call timed out after 5 s while Ollama loaded the model. That is fixed by T027. Re-run after rebuilding the API image.
 
 ## Phase 4: User Story 3 - GitOps on Minikube (P2, PR `feature/gitops-minikube`)
 
@@ -58,6 +60,6 @@ description: "Tasks for local-runtime, migrated from the LR section of tasks/tod
 ## Dependencies
 
 - T002 → T003. T004 and T005 are independent files. T006 waits for T004 and T005. T007 waits for T003 and T006.
-- T008 and T009 are independent. T010 waits for both. T011 waits for T010. T012 waits for T007. T013 waits for T011. T014 waits for T012 and T013. T015 waits for T014.
+- T008 and T009 are independent. T010 waits for both. T011 waits for T010. T012 waits for T007. T013 waits for T011. T014 waits for T012 and T013. T026 waits for T007. T027 waits for T026. T015 waits for T014 and T027.
 - T016 → T017 → T018 → T019 → T020 → T021 → T022 → T023. They all add tests to test_gitops.py, so none are [P].
 - T024 waits for T023. T025 waits for T022 and T015.
