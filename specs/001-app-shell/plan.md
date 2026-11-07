@@ -76,12 +76,13 @@ src/backend/
       text_layer_parser.py   # pypdf (stub)
       docling_parser.py      # local, converter injected
       docling_factory.py     # lazy Docling import (003)
-      memory_corpus.py       # stub store and token-overlap search
+      memory_corpus.py       # StoredCorpus protocol, stub store, token-overlap search
       qdrant_corpus.py       # upsert helper
       qdrant_query.py        # hybrid query body, no client import (003)
       qdrant_index.py        # (003)
       local_corpus.py        # StoredCorpus over Qdrant and Ollama embeddings (003)
       ollama_embeddings.py   # (003)
+      pdf_store.py           # DATA_DIR/<id>.pdf in the local profile (003)
     chat/
       quoting_chat_model.py  # stub
       ollama_chat_model.py   # local
@@ -111,7 +112,7 @@ PROFILE=local OLLAMA_BASE_URL=http://127.0.0.1:11434/v1 OLLAMA_CHAT_MODEL=llama3
 
 ## Architecture Decisions
 
-- The `Parser`, `Corpus` and `ChatModel` protocols are the ports. They appear when a second implementation needs them. Earlier slices used plain functions.
+- The ports are `Parser` (`documents/parser.py`, async `parse(file_name, data) -> list[ParsedPage]`), `StoredCorpus` (`documents/memory_corpus.py`: a `documents` map, sync `add(document_id, source_file, pages) -> (StoredDocument, created)`, and `search(query) -> list[StoredChunk]`), and `ChatModel` (`http/chat.py`, async `answer(query, citations) -> str`). Each appears when a second implementation needs it. Earlier slices used plain functions. `add` is sync because the async upload route calls it without `await`.
 - One chunk per page is a loop in the store. There is no `chunk.py` until a second splitting rule exists.
 - Docling and `qdrant-client` are imported only inside the local adapters. Tests inject fakes.
 - Route flags let a route ship dark until it matches this spec. Documents turned on with AS-11 and AS-12. Chat turned on with AS-13 to AS-18.

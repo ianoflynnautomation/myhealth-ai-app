@@ -106,7 +106,7 @@ With the local profile and Ollama plus Qdrant running, a scanned or table-heavy 
 - **FR-013**: The stub profile MUST need no service URLs, MUST NOT import `docling` or `qdrant_client`, MUST NOT open a network connection, and MUST NOT write under `data/`.
 - **FR-014**: The local profile MUST refuse to start when any of `QDRANT_URL`, `OLLAMA_BASE_URL`, `OLLAMA_CHAT_MODEL`, `OLLAMA_EMBED_MODEL` or `DATA_DIR` is missing.
 - **FR-015**: The local profile MUST refuse to start when the local dependency group is not installed, with the sync hint.
-- **FR-016**: The local profile MUST parse text, tables and scans in-process, importing the parser on first use. It MUST keep original PDF bytes under `DATA_DIR`, and store chunks and vectors in the vector store using hybrid keyword plus dense search.
+- **FR-016**: The local profile MUST parse text, tables and scans in-process, importing the parser on first use. It MUST keep original PDF bytes under `DATA_DIR` (built by `003-local-runtime` FR-017, LR-19), and store chunks and vectors in the vector store using hybrid keyword plus dense search.
 - **FR-017**: `POST /documents` and `POST /chat` MUST be switchable with `DOCUMENTS_ENABLED` and `CHAT_ENABLED`, and through `create_app` arguments.
 - **FR-018**: `POST /documents` MUST be safe to retry. `POST /chat` MUST NOT write.
 - **FR-019**: Backend CI MUST run lint, format, type check, tests and the package build on pull requests and on `main` when `src/backend` changes, without the local group. Docs-only changes MUST skip those jobs.
