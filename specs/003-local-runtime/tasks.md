@@ -33,8 +33,8 @@ description: "Tasks for local-runtime, migrated from the LR section of tasks/tod
 - [X] T011 [US1] Pull both Ollama models before the API starts in compose.yaml, tested by src/backend/tests/test_compose.py::test_compose_should_pull_the_two_models (LR-11, 2026-10-27)
 - [X] T012 [US2] Keep each uploaded PDF as `DATA_DIR/<id>.pdf` in the local profile, once per id, in src/backend/src/health_api/documents/pdf_store.py, src/backend/src/health_api/http/documents.py and src/backend/src/health_api/main.py, tested by src/backend/tests/test_local_factory.py::test_the_local_profile_should_keep_the_pdf_in_data_dir (LR-19, FR-017, 2026-11-07)
 - [X] T013 [US1] Guard that every published Compose port binds `127.0.0.1`, not only the four expected ones (the volumes, `./data` and pinned tags were already covered by T010 and T011), in src/backend/tests/test_compose.py::test_compose_should_publish_on_localhost_only (LR-20, FR-005, 2026-11-07; RED shown by unbinding the qdrant port, then reverted)
-- [ ] T014 [US1] Merge `feature/compose-stack`, confirm `cd src/backend && make check` passes with no Docker daemon, and record the date here (LR-CP3)
-- [ ] T015 [US2] Run the Compose manual check in specs/003-local-runtime/plan.md and record the date and result here (SC-001, SC-004)
+- [X] T014 [US1] Merge `feature/compose-stack` and confirm `cd src/backend && make check` passes with no Docker daemon (LR-CP3, 2026-11-07, PR #22; LR-19 and LR-20 follow in `feature/local-data-dir`)
+- [X] T015 [US2] Run the Compose manual check in specs/003-local-runtime/plan.md (SC-001, SC-004; run by the maintainer 2026-11-07, reported complete)
 
 ## Phase 4: User Story 3 - GitOps on Minikube (P2, PR `feature/gitops-minikube`)
 
