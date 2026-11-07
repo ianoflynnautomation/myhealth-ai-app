@@ -12,7 +12,7 @@ Build order: app-shell → chat-ui and local-runtime.
 
 `chat-ui` and `local-runtime` can be specified in parallel after app-shell. They don't call each other.
 
-Parser, corpus, and chat model are ports inside app-shell. Later modules don't redefine them. The HTTP contract is [specs/001-app-shell/contracts/http.md](../specs/001-app-shell/contracts/http.md).
+`Parser`, `StoredCorpus` and `ChatModel` are ports inside app-shell. Later modules don't redefine them. The HTTP contract is [specs/001-app-shell/contracts/http.md](../specs/001-app-shell/contracts/http.md).
 
 | Module id | Feature | Status |
 | --- | --- | --- |

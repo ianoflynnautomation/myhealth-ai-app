@@ -18,7 +18,7 @@ Wire the local profile from settings, build two images, run them with Qdrant and
 
 **Testing**: pytest unit tests that read files as text: tests/test_api_image.py, test_web_image.py, test_compose.py and test_gitops.py. They don't need Docker.
 
-**Target Platform**: macOS or Linux with Docker. Minikube profile `myhealth`. Optionally the homelab cluster.
+**Target Platform**: macOS or Linux with Docker. Minikube profile `myhealth` with the Calico CNI. Optionally the homelab cluster.
 
 **Project Type**: deployment and runtime configuration for the web app.
 
@@ -51,23 +51,27 @@ gitops/clusters/myhealth/
   kustomization.yaml  sync.yaml  ks.yaml
 gitops/apps/base/myhealth/
   namespace.yaml  kustomization.yaml   # namespace only
-  api/ks.yaml     api/app/             # Deployment, Service, PVC, NetworkPolicy
+  api/ks.yaml     api/app/             # Deployment (no OLLAMA_BASE_URL), Service, PVC, NetworkPolicy (qdrant + DNS)
   web/ks.yaml     web/app/
   qdrant/ks.yaml  qdrant/app/          # HelmRepository + HelmRelease
-  ollama/ks.yaml  ollama/app/          # homelab only
-gitops/apps/overlays/myhealth/         # api, web, qdrant
-gitops/apps/overlays/homelab/          # those plus ollama, and the api patch
+  ollama/ks.yaml  ollama/app/          # homelab only: HelmRepository + HelmRelease
+gitops/apps/overlays/myhealth/         # api, web, qdrant + api-patch.yaml (host Ollama)
+gitops/apps/overlays/homelab/          # those plus ollama + api-patch.yaml (in-cluster Ollama)
 ```
 
 **Structure Decision**: the GitOps tree follows the homelab repo's `ai-system` shape, so the homelab cluster can adopt it later without a restructure.
 
 ## Architecture Decisions
 
+- The original PDF bytes are kept by `DirectoryPdfStore` (`documents/pdf_store.py`) as `DATA_DIR/<id>.pdf`. Only the local profile builds one, so the stub still writes nothing.
+- Qdrant point ids are the UUIDv5 of `{documentId}:{pageNumber}` (`qdrant_index.py`). The readable id travels in the payload as `pointId`.
 - `QdrantCorpus` stays an upsert helper. A new `local_corpus.py` implements the `StoredCorpus` protocol the routes call. It calls `add` synchronously and returns `(StoredDocument, created)`, and it uses a sync httpx client, because `asyncio.run` inside the async route would fail.
 - The hybrid query body is a pure function in `qdrant_query.py`, so `make check` never imports `qdrant_client`.
 - `OLLAMA_BASE_URL` includes `/v1`, because the client posts to `{base}/chat/completions`.
 - `flux install` installs the controllers but doesn't watch Git. `sync.yaml` is applied once, and after that a push to `main` is the only way to change the profile.
-- The overlays differ in four places: the Ollama component, the API `dependsOn` list, `OLLAMA_BASE_URL`, and the API egress rule.
+- The overlays differ in four places: the Ollama component, the API `dependsOn` list, `OLLAMA_BASE_URL`, and the API egress rule. The last three are one patch per overlay on the Flux `Kustomization` named `api`. The patch adds `spec.patches` (a Deployment env patch and a NetworkPolicy egress patch) and, on homelab, `spec.dependsOn`. A plain Kustomize patch can't reach the Deployment, because the overlay renders only Flux objects.
+- NetworkPolicy egress always allows DNS to `kube-dns`. The host Ollama is an `ipBlock` `/32`, because policies can't match a name. The Minikube CIDR is committed in the overlay and checked during the Minikube check (see below).
+- Minikube starts with `--cni=calico`. Its default CNI ignores NetworkPolicy, and then FR-012 would hold only on paper.
 
 ## Environment
 
@@ -93,10 +97,14 @@ These are not part of `make check` or GitHub Actions.
 5. The page shows the sentence, the file name and page 1.
 6. The PDF bytes are under `data/` on the host.
 
-**Minikube** (Ollama running on the host with both models pulled)
+**Minikube** (not set up on this machine yet)
+
+Prerequisites, done once: install `minikube`, `kubectl` and the `flux` CLI (`brew install minikube kubectl fluxcd/tap/flux`). Run `ollama serve` on the host and pull `llama3.1` and `nomic-embed-text`. Merge the GitOps tree to `main`, because Flux reads `main` from GitHub.
 
 ```sh
-minikube start -p myhealth
+docker compose build                     # builds myhealth-api:local and myhealth-web:local
+minikube start -p myhealth --cni=calico
+minikube ssh -p myhealth -- getent hosts host.minikube.internal   # must match the ipBlock in overlays/myhealth/api-patch.yaml
 minikube image load myhealth-api:local -p myhealth
 minikube image load myhealth-web:local -p myhealth
 flux install --context myhealth
@@ -106,7 +114,7 @@ flux reconcile kustomization apps --context myhealth --with-source
 minikube service web -n myhealth -p myhealth --url
 ```
 
-Then repeat the upload and the question. The API log shows the Ollama host as `host.minikube.internal`.
+Then repeat the upload and the question. The API log shows the Ollama host as `host.minikube.internal`. If `getent` printed a different address from the committed `/32`, change the overlay in a commit and push it. Don't patch the cluster by hand.
 
 The homelab overlay is not applied from this check.
 
@@ -116,8 +124,8 @@ The homelab overlay is not applied from this check.
 | --- | --- | --- |
 | 1 | `docs/local-runtime-spec` | LR-01 |
 | 2 | `feature/local-boot` | LR-02–LR-07 |
-| 3 | `feature/compose-stack` | LR-08–LR-11 |
-| 4 | `feature/gitops-minikube` | LR-12–LR-17 |
+| 3 | `feature/compose-stack` | LR-08–LR-11, LR-19, LR-20 |
+| 4 | `feature/gitops-minikube` | LR-12–LR-17, LR-21 |
 | 5 | `feature/gitops-homelab` | LR-18 |
 
 ## Boundaries
@@ -130,7 +138,10 @@ The homelab overlay is not applied from this check.
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
 | Installing Docling in `make check` or CI | Slow gate that imports native libraries | LR-02 test rejects `--group local` in the Makefile and workflows |
-| A NetworkPolicy that only allows in-cluster Ollama | Minikube can't reach the host model | The Minikube policy allows the host. The homelab policy doesn't |
+| A NetworkPolicy that only allows in-cluster Ollama | Minikube can't reach the host model | The Minikube patch allows the host `/32`. The homelab patch doesn't |
+| Default Minikube CNI ignores NetworkPolicy | Policies untested | `--cni=calico` |
+| Egress policy without DNS | Every lookup fails, including Qdrant | Base policy allows `kube-dns` on 53 |
+| The host address depends on the Minikube driver | Host Ollama blocked | `getent` step in the Minikube check |
 | `myhealth-api:local` on a cluster that can't load it | CrashLoop on homelab | LR-18 writes the overlay but does not apply it |
 | A guessed Qdrant hybrid query shape | Page not retrieved | LR-05 was checked against the Qdrant docs, and its test asserts both the text and the vector |
 

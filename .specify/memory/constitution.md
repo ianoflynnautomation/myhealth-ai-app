@@ -1,6 +1,9 @@
 <!--
 Sync Impact Report
-- Version change: template → 1.0.0 (first ratification)
+- Version change: 1.0.0 → 1.0.1 (PATCH, wording only)
+  - I: "Published ports" now reads "Host-published ports". A container may listen on 0.0.0.0 inside its own network.
+  - VI: the approval rule names a host-published port on 0.0.0.0, and the ports are listed by their code names (StoredCorpus, Parser, ChatModel).
+- Previous: template → 1.0.0 (first ratification)
 - Principles added:
   I. Health Records Stay Local (NON-NEGOTIABLE)
   II. Grounded, Cited Answers
@@ -27,7 +30,7 @@ MyHealth AI answers questions about a person's own medical PDFs and cites the fi
 - A PDF, a page chunk, or an embedding MUST NOT go to any host other than the configured Ollama and Qdrant URLs. There is no hosted parser, hosted model or hosted vector service.
 - `data/`, model weights, `.venv`, and secrets MUST NOT be committed. A secret that a manifest needs is a SOPS file plus an example file. It is never a plain value.
 - Fixtures, prompt examples and test names MUST be synthetic. A real health record or a realistic patient narrative never goes in the repo. The fixture sentence is `DemoMarker value is 10 units.`
-- Published ports bind to `127.0.0.1` unless a spec approves otherwise.
+- Host-published ports bind to `127.0.0.1` unless a spec approves otherwise. A process may listen on `0.0.0.0` inside its own container network.
 
 Rationale: the corpus is personal health data. A leak can't be undone.
 
@@ -65,9 +68,9 @@ Rationale: an uncited health answer can't be checked, and a misread one can caus
 
 - Work follows the module order in `docs/capability-map.md`. One feature folder in `specs/` is one module.
 - A module does not edit another module's code unless its spec says so. For example, `chat-ui` does not edit `src/backend`.
-- Parser, Corpus, and ChatModel are ports in app-shell. A port is added when a second implementation needs it, and later modules don't redefine it.
+- `Parser`, `StoredCorpus` and `ChatModel` are the ports in app-shell. A port is added when a second implementation needs it, and later modules don't redefine it.
 - Start simple. One chunk per page. One index. No streaming, auth, speech or chat history until a spec asks for it.
-- These need explicit approval first: a new dependency, a new route, a CI change, a uv workspace, or binding a port to `0.0.0.0`.
+- These need explicit approval first: a new dependency, a new route, a CI change, a uv workspace, or publishing a host port on `0.0.0.0`.
 
 ## Technology Constraints
 
@@ -93,4 +96,4 @@ Rationale: an uncited health answer can't be checked, and a misread one can caus
 - Amendments go through `/speckit-constitution` and update the Sync Impact Report. Versions follow semantic versioning. MAJOR removes or redefines a principle, MINOR adds one or expands it materially, PATCH clarifies wording.
 - Every plan's Constitution Check and every review checks compliance with these principles.
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-07 | **Last Amended**: 2026-11-07
+**Version**: 1.0.1 | **Ratified**: 2026-11-07 | **Last Amended**: 2026-11-07

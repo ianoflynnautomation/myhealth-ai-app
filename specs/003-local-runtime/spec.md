@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-27
 
-**Status**: In progress. The local boot and the Compose stack are built. The GitOps tree (User Stories 3 and 4) is open.
+**Status**: In progress. The local boot and the Compose stack are built. The GitOps tree (User Stories 3 and 4) is open. Minikube is not set up on the development machine yet.
 
 **Input**: Module `local-runtime` from [docs/capability-map.md](../../docs/capability-map.md). It runs the local profile in Docker Compose, and runs the same images in a Minikube profile reconciled by Flux. It consumes [the app-shell HTTP contract](../001-app-shell/contracts/http.md) unchanged.
 
@@ -84,13 +84,15 @@ The same Git tree has a homelab overlay where Ollama is its own Flux `Kustomizat
 - `docker compose down` keeps the named volumes `qdrant-data` and `ollama-models`. `down -v` deletes them, but not `./data`, because that is a bind mount.
 - On Minikube the images are loaded, never pulled: `imagePullPolicy: IfNotPresent`.
 - The homelab cluster can't run `myhealth-*:local` images until a registry exists. That is why the overlay is written but not applied.
+- The document list in the local profile lives in the API process. After the API restarts, `GET /documents` is empty while Qdrant still holds the chunks, so a question can be cited from a file the list doesn't show. This is a known limit. Rebuilding the list from Qdrant is later.
+- The same bytes uploaded twice keep one file under `DATA_DIR`, named `<id>.pdf`.
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
 - **FR-001**: The local profile MUST build its parser, corpus and chat model from settings when the local group is installed and no factories are injected. Missing settings and a missing local group MUST still fail as they do in app-shell. The stub path MUST still not import the local modules.
-- **FR-002**: The local corpus MUST implement the corpus protocol the routes use. It embeds with Ollama, upserts the camelCase payload (`sourceFile`, `sourcePage`, `content`) with point id `{documentId}:{pageNumber}`, and searches with a hybrid BM25 plus dense query on collection `pages`, with 768 dimensions.
+- **FR-002**: The local corpus MUST implement the corpus protocol the routes use. It embeds with Ollama, upserts the camelCase payload (`sourceFile`, `sourcePage`, `content`, `pointId`), where `pointId` is `{documentId}:{pageNumber}` and the Qdrant point id is the UUIDv5 of `pointId` (Qdrant accepts only integer or UUID ids), and searches with a hybrid BM25 plus dense query on collection `pages`, with 768 dimensions.
 - **FR-003**: An API image `myhealth-api:local` MUST be built from `src/backend` with the locked `local` group and without the dev group. It runs `fastapi run` on `0.0.0.0:8000`.
 - **FR-004**: A web image `myhealth-web:local` MUST serve the Vite build and proxy `/documents`, `/chat` and `/health` to `http://api:8000`.
 - **FR-005**: `compose.yaml` MUST run `web`, `api`, `qdrant` and `ollama`. It publishes `8080`, `8000`, `6333` and `11434` on `127.0.0.1` only. It bind-mounts `./data` at `/data`, uses named volumes `qdrant-data` and `ollama-models`, and pins upstream tags.
@@ -100,11 +102,12 @@ The same Git tree has a homelab overlay where Ollama is its own Flux `Kustomizat
 - **FR-009**: Namespace `myhealth` MUST enforce pod security `baseline`, and audit and warn at `restricted`.
 - **FR-010**: Each component `ks.yaml` MUST be a Flux `Kustomization` with `prune: true`, `wait: true` and `sourceRef.name: flux-system`. `web` depends on `api`. `api` depends on `qdrant`, and on homelab also on `ollama`.
 - **FR-011**: The API manifest MUST mount the PersistentVolumeClaim `health-data` at `/data` and set the same environment keys as Compose, with cluster URLs.
-- **FR-012**: NetworkPolicies MUST allow `web` → `api`. On Minikube, `api` → `qdrant` and the host Ollama. On homelab, `api` → `qdrant` and in-cluster `ollama`, and not the host.
+- **FR-012**: NetworkPolicies MUST allow `web` → `api`, and `api` → `qdrant` on 6333 plus DNS (UDP and TCP 53 to `kube-dns` in `kube-system`). The base API policy has no Ollama rule. The Minikube overlay adds egress to the host Ollama as an `ipBlock` `/32` on port 11434, because a NetworkPolicy can't select a DNS name. The CIDR is the address `host.minikube.internal` resolves to on the node. The homelab overlay adds egress to pods of the in-cluster `ollama` release on 11434 and no `ipBlock`. Policies are enforced only when the cluster runs a CNI that implements them, so the Minikube profile is started with `--cni=calico`.
 - **FR-013**: Qdrant MUST be a `HelmRelease` of chart `qdrant` from `https://qdrant.github.io/qdrant-helm`, one replica, with a pinned version.
-- **FR-014**: The Minikube overlay MUST list `api`, `web` and `qdrant` and MUST NOT list `ollama`. The homelab overlay MUST add chart `ollama` from `https://otwld.github.io/ollama-helm`, pinned, with no model baked into an image we build.
+- **FR-014**: The Minikube overlay MUST list `api`, `web` and `qdrant` and MUST NOT list `ollama`. The homelab overlay MUST add chart `ollama` from `https://otwld.github.io/ollama-helm` (its own `HelmRepository`), pinned, with no model baked into an image we build. The overlays render Flux `Kustomization` objects, not the Deployment, so each overlay changes the API by patching the Flux `Kustomization` named `api`. The patch sets `spec.patches`, which carries the Deployment `OLLAMA_BASE_URL` and the Ollama egress rule. On homelab it also sets `spec.dependsOn`. The base API Deployment has no `OLLAMA_BASE_URL`.
 - **FR-015**: An offline test in `make check` MUST read `compose.yaml` and `gitops/` as text and check FR-006, FR-008, FR-010 and FR-014. It opens no socket and starts no daemon.
 - **FR-016**: No route, status code or JSON field may differ from the app-shell contract.
+- **FR-017**: The local profile MUST keep each uploaded PDF's original bytes as `DATA_DIR/<id>.pdf` before the pages are stored, and MUST NOT write the file again for the same bytes. The stub profile MUST still write nothing (app-shell FR-013, FR-016).
 
 ### Key Entities
 
