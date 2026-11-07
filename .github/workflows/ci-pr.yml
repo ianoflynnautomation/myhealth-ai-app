@@ -62,7 +62,7 @@ jobs:
     permissions:
       contents: read
       actions: read
-    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/node-build-test.yml@f69cd6a0c7977cb516ae8f7fe8fbdb1b7c1bc0a1  # npm download cache
+    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/node-build-test.yml@976190f0214163d0251b021d8db2ff2cf4a01644  # npm download cache
     with:
       job-name: Frontend Lint
       working-directory: src/frontend
@@ -83,7 +83,7 @@ jobs:
     permissions:
       contents: read
       actions: read
-    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/node-build-test.yml@f69cd6a0c7977cb516ae8f7fe8fbdb1b7c1bc0a1  # npm download cache
+    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/node-build-test.yml@976190f0214163d0251b021d8db2ff2cf4a01644  # npm download cache
     with:
       job-name: Frontend Typecheck
       working-directory: src/frontend
@@ -101,7 +101,7 @@ jobs:
     permissions:
       contents: read
       actions: read
-    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/node-build-test.yml@f69cd6a0c7977cb516ae8f7fe8fbdb1b7c1bc0a1  # npm download cache
+    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/node-build-test.yml@976190f0214163d0251b021d8db2ff2cf4a01644  # npm download cache
     with:
       job-name: Frontend Unit Tests
       working-directory: src/frontend
@@ -128,7 +128,7 @@ jobs:
     permissions:
       contents: read
       actions: read
-    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/node-build-test.yml@f69cd6a0c7977cb516ae8f7fe8fbdb1b7c1bc0a1  # npm download cache
+    uses: ianoflynnautomation/bjjeire-ci-templates/.github/workflows/node-build-test.yml@976190f0214163d0251b021d8db2ff2cf4a01644  # npm download cache
     with:
       job-name: Frontend Build
       working-directory: src/frontend
