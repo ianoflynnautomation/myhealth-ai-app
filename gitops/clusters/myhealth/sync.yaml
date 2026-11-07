@@ -1,0 +1,25 @@
+# Applied once by hand after `flux install`. After that, Flux keeps it in sync from main.
+# The repo is public, so the source needs no secret.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  interval: 1m
+  url: https://github.com/ianoflynnautomation/myhealth-ai-app
+  ref:
+    branch: main
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./gitops/clusters/myhealth
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
