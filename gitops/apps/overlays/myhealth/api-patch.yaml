@@ -1,0 +1,32 @@
+# The overlay renders Flux Kustomizations, not the Deployment, so the API changes travel as spec.patches.
+# The cidr is the address host.minikube.internal resolves to with the Docker Desktop driver.
+# Check it with: minikube ssh -p myhealth -- getent hosts host.minikube.internal
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: api
+  namespace: flux-system
+spec:
+  patches:
+    - target:
+        kind: Deployment
+        name: api
+      patch: |
+        - op: add
+          path: /spec/template/spec/containers/0/env/-
+          value:
+            name: OLLAMA_BASE_URL
+            value: http://host.minikube.internal:11434/v1
+    - target:
+        kind: NetworkPolicy
+        name: api
+      patch: |
+        - op: add
+          path: /spec/egress/-
+          value:
+            to:
+              - ipBlock:
+                  cidr: 192.168.65.254/32
+            ports:
+              - protocol: TCP
+                port: 11434
