@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import pytest
@@ -107,3 +108,24 @@ def test_the_web_kustomization_should_depend_on_api() -> None:
     assert "app.kubernetes.io/name: api" in policy
     assert "port: 8000" in policy
     assert "k8s-app: kube-dns" in policy
+
+
+def test_qdrant_should_be_a_pinned_helm_release() -> None:
+    # Given
+    repository = _text("apps/base/myhealth/qdrant/app/helmrepository.yaml")
+    release = _text("apps/base/myhealth/qdrant/app/helmrelease.yaml")
+    api = _text("apps/base/myhealth/api/ks.yaml")
+
+    # When
+    version = re.search(r'version: "?([^"\n]+)"?', release)
+
+    # Then
+    assert "kind: HelmRepository" in repository
+    assert "url: https://qdrant.github.io/qdrant-helm" in repository
+    assert "kind: HelmRelease" in release
+    assert "chart: qdrant" in release
+    assert "releaseName: qdrant" in release
+    assert "replicaCount: 1" in release
+    assert version is not None
+    assert re.fullmatch(r"\d+\.\d+\.\d+", version.group(1))
+    assert "- name: qdrant" in api.split("dependsOn:", 1)[1]
