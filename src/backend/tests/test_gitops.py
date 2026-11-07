@@ -34,3 +34,20 @@ def test_sync_should_watch_this_repo_without_a_secret() -> None:
     assert "sync.yaml" in listing
     assert "ks.yaml" in listing
     assert not components.exists()
+
+
+def test_the_namespace_should_enforce_baseline() -> None:
+    # Given
+    namespace = _text("apps/base/myhealth/namespace.yaml")
+
+    # When
+    listing = _text("apps/base/myhealth/kustomization.yaml")
+
+    # Then
+    assert "kind: Namespace" in namespace
+    assert "name: myhealth" in namespace
+    assert "pod-security.kubernetes.io/enforce: baseline" in namespace
+    assert "pod-security.kubernetes.io/audit: restricted" in namespace
+    assert "pod-security.kubernetes.io/warn: restricted" in namespace
+    assert "namespace.yaml" in listing
+    assert "ks.yaml" not in listing
