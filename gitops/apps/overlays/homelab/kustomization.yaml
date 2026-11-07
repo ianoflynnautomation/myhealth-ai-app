@@ -1,0 +1,11 @@
+# Homelab cluster. Ollama runs here as its own Helm release. Not applied until someone asks for that cluster.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base/myhealth
+  - ../../base/myhealth/qdrant/ks.yaml
+  - ../../base/myhealth/ollama/ks.yaml
+  - ../../base/myhealth/api/ks.yaml
+  - ../../base/myhealth/web/ks.yaml
+patches:
+  - path: api-patch.yaml

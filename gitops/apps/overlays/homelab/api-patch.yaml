@@ -1,0 +1,34 @@
+# The merge replaces the whole dependsOn list, so qdrant is listed again.
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: api
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: qdrant
+    - name: ollama
+  patches:
+    - target:
+        kind: Deployment
+        name: api
+      patch: |
+        - op: add
+          path: /spec/template/spec/containers/0/env/-
+          value:
+            name: OLLAMA_BASE_URL
+            value: http://ollama.myhealth.svc.cluster.local:11434/v1
+    - target:
+        kind: NetworkPolicy
+        name: api
+      patch: |
+        - op: add
+          path: /spec/egress/-
+          value:
+            to:
+              - podSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: ollama
+            ports:
+              - protocol: TCP
+                port: 11434
