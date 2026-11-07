@@ -37,14 +37,15 @@ def _payload(point: Any) -> dict[object, object] | None:
 
 
 def _ensure_collection(client: Any, models: Any) -> None:
-    if client.collection_exists(COLLECTION):
-        return
-    client.create_collection(
-        collection_name=COLLECTION,
-        vectors_config={
-            "dense": models.VectorParams(size=DENSE_SIZE, distance=models.Distance.COSINE),
-        },
-    )
+    if not client.collection_exists(COLLECTION):
+        client.create_collection(
+            collection_name=COLLECTION,
+            vectors_config={
+                "dense": models.VectorParams(size=DENSE_SIZE, distance=models.Distance.COSINE),
+            },
+        )
+    # Declared on every start so a collection made before BM25 scoring was set gets it too.
+    # Qdrant rebuilds the index when its parameters change.
     client.create_payload_index(
         collection_name=COLLECTION,
         field_name="content",
@@ -52,6 +53,7 @@ def _ensure_collection(client: Any, models: Any) -> None:
             type="text",
             tokenizer=models.TokenizerType.WORD,
             lowercase=True,
+            scoring=models.TextScoringParams(type=models.TextScoringType.BM25),
         ),
     )
 
