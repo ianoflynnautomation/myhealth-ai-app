@@ -1,0 +1,26 @@
+# Chart 1.92.0 ships Ollama 0.40.11, the same version compose.yaml pins.
+# The models are pulled into the volume at startup. No model goes into an image we build.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ollama
+spec:
+  interval: 30m
+  timeout: 30m
+  releaseName: ollama
+  chart:
+    spec:
+      chart: ollama
+      version: "1.92.0"
+      sourceRef:
+        kind: HelmRepository
+        name: ollama
+  values:
+    ollama:
+      models:
+        pull:
+          - llama3.1
+          - nomic-embed-text
+    persistentVolume:
+      enabled: true
+      size: 30Gi

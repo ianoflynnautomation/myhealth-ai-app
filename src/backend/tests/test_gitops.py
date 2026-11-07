@@ -170,3 +170,32 @@ def test_the_myhealth_overlay_should_omit_ollama_and_patch_the_host() -> None:
     assert "port: 11434" in patch
     assert cidr is not None
     assert cidr.group(1).endswith("/32")
+
+
+def test_the_homelab_overlay_should_run_ollama() -> None:
+    # Given
+    overlay = _text("apps/overlays/homelab/kustomization.yaml")
+    patch = _text("apps/overlays/homelab/api-patch.yaml")
+    repository = _text("apps/base/myhealth/ollama/app/helmrepository.yaml")
+    release = _text("apps/base/myhealth/ollama/app/helmrelease.yaml")
+
+    # When
+    depends_on = patch.split("dependsOn:", 1)[1].split("patches:", 1)[0]
+    version = re.search(r'version: "?([^"\n]+)"?', release)
+
+    # Then
+    for component in ("api", "web", "qdrant", "ollama"):
+        assert f"../../base/myhealth/{component}/ks.yaml" in overlay
+    assert "path: api-patch.yaml" in overlay
+    assert "- name: qdrant" in depends_on
+    assert "- name: ollama" in depends_on
+    assert "value: http://ollama.myhealth.svc.cluster.local:11434/v1" in patch
+    assert "app.kubernetes.io/name: ollama" in patch
+    assert "host.minikube.internal" not in patch
+    assert "ipBlock" not in patch
+    assert "url: https://otwld.github.io/ollama-helm" in repository
+    assert "chart: ollama" in release
+    assert version is not None
+    assert re.fullmatch(r"\d+\.\d+\.\d+", version.group(1))
+    assert "- llama3.1" in release
+    assert "- nomic-embed-text" in release
