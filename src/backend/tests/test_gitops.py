@@ -87,3 +87,23 @@ def test_the_base_api_should_allow_qdrant_and_dns_only() -> None:
     assert "ollama" not in policy
     for name in ("api.yaml", "networkpolicy.yaml"):
         assert name in listing
+
+
+def test_the_web_kustomization_should_depend_on_api() -> None:
+    # Given
+    flux = _text("apps/base/myhealth/web/ks.yaml")
+    web = _text("apps/base/myhealth/web/app/web.yaml")
+    policy = _text("apps/base/myhealth/web/app/networkpolicy.yaml")
+
+    # When
+    depends_on = flux.split("dependsOn:", 1)[1]
+
+    # Then
+    assert "path: ./gitops/apps/base/myhealth/web/app" in flux
+    assert "- name: api" in depends_on
+    assert "image: myhealth-web:local" in web
+    assert "imagePullPolicy: IfNotPresent" in web
+    assert "type: NodePort" in web
+    assert "app.kubernetes.io/name: api" in policy
+    assert "port: 8000" in policy
+    assert "k8s-app: kube-dns" in policy
