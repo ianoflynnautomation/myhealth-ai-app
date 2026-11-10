@@ -52,7 +52,7 @@ description: "Tasks for local-runtime, migrated from the LR section of tasks/tod
 
 ## Phase 6: Verification
 
-- [ ] T024 Confirm LR-12 to LR-18 and LR-21 are merged, and that `cd src/backend && make check` passes without Docker, including the app-shell tests that pin the HTTP contract (FR-016, SC-006). Record the date here (LR-CP4)
+- [X] T024 Confirm LR-12 to LR-18 and LR-21 are merged, and that `cd src/backend && make check` passes without Docker, including the app-shell tests that pin the HTTP contract (FR-016, SC-006). Record the date here (LR-CP4, 2026-11-10; LR-18 reached `main` in PR #40, and `make check` passed with `DOCKER_HOST` pointed at a missing socket)
 - [ ] T025 [US3] Set up Minikube and run the Minikube check in specs/003-local-runtime/plan.md, including the `getent` check of the committed host `/32`. Record the date here. Do not apply the homelab overlay to a shared cluster (SC-002)
 
 ## Dependencies
