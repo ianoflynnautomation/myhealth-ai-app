@@ -31,7 +31,7 @@ Wire the local profile from settings, build two images, run them with Qdrant and
 | I. Health records stay local | Pass | Only local Ollama and Qdrant. `127.0.0.1` binds. `./data` is a gitignored bind mount and nothing is baked into an image. `sync.yaml` has no secret. |
 | II. Grounded, cited answers | Pass | Unchanged from app-shell. The route still cites `hits[:1]`. |
 | III. One HTTP contract | Pass | No route or field changes (FR-016). The web proxy forwards the three existing paths. |
-| IV. Test-first thin slices | Pass | LR-02 to LR-18, one named test each. |
+| IV. Test-first thin slices | Pass | LR-02 to LR-21, one named test each. |
 | V. Offline quality gates | Pass | The manifest tests are text-only. Compose and Minikube checks are manual. |
 | VI. Modules, ports, simplicity | Pass | It reuses the app-shell ports. The local corpus is a new adapter, not a new port. |
 
@@ -124,9 +124,10 @@ The homelab overlay is not applied from this check.
 | --- | --- | --- |
 | 1 | `docs/local-runtime-spec` | LR-01 |
 | 2 | `feature/local-boot` | LR-02–LR-07 |
-| 3 | `feature/compose-stack` | LR-08–LR-11, LR-19, LR-20 |
-| 4 | `feature/gitops-minikube` | LR-12–LR-17, LR-21 |
-| 5 | `feature/gitops-homelab` | LR-18 |
+| 3 | `feature/compose-stack` | LR-08–LR-11 |
+| 4 | `feature/local-data-dir` | LR-19, LR-20 |
+| 5 | `feature/gitops-minikube` | LR-12–LR-17, LR-21 |
+| 6 | `feature/gitops-homelab-main` | LR-18 (PR #38 from `feature/gitops-homelab` merged into `feature/gitops-minikube` after that branch had merged, so the commit was cherry-picked onto `main`) |
 
 ## Boundaries
 

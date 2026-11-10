@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-27
 
-**Status**: In progress. The local boot and the Compose stack are built. The GitOps tree (User Stories 3 and 4) is open. Minikube is not set up on the development machine yet.
+**Status**: In progress. The local boot, the Compose stack and the GitOps tree with both overlays (User Stories 3 and 4) are built. Minikube is not set up on the development machine yet, so the Minikube manual check is open.
 
 **Input**: Module `local-runtime` from [docs/capability-map.md](../../docs/capability-map.md). It runs the local profile in Docker Compose, and runs the same images in a Minikube profile reconciled by Flux. It consumes [the app-shell HTTP contract](../001-app-shell/contracts/http.md) unchanged.
 
