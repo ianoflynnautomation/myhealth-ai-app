@@ -14,7 +14,7 @@ Specs, plans and tasks live in `specs/NNN-module/` (`spec.md`, `plan.md`, `tasks
 | --- | --- |
 | `specs/001-app-shell` | Implemented. HTTP contract in `contracts/http.md`. |
 | `specs/002-chat-ui` | Implemented. Manual check open. |
-| `specs/003-local-runtime` | In progress. LR-19/LR-20 on `feature/compose-stack`, then GitOps T016–T025. |
+| `specs/003-local-runtime` | In progress. Compose and the GitOps tree with both overlays are built (T001–T023). Open: the T024 checkpoint (LR-CP4) and the Minikube manual check T025. |
 
 - The workflow is `/speckit-specify` → `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks` → `/speckit-analyze` → `/speckit-implement`. A new module gets the next `NNN`.
 - To work on an existing feature, point spec-kit at it: `SPECIFY_FEATURE_DIRECTORY=specs/003-local-runtime`, or set `.specify/feature.json`, which is gitignored and per checkout.
