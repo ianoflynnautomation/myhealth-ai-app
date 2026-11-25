@@ -154,7 +154,7 @@ jobs:
       - backend_build
     steps:
       - name: Verify all required main-branch jobs succeeded or were intentionally skipped
-        uses: ianoflynnautomation/bjjeire-ci-templates/actions/check-required-jobs@a9bc3cb4b8ea83909408c94409b9de360160b96b  # v1.8.0
+        uses: ianoflynnautomation/bjjeire-ci-templates/actions/check-required-jobs@c6b3e1c261b62f0eb11868f8df2830002020380b  # v1.9.0
         with:
           needs-json: ${{ toJson(needs) }}
           summary-title: Main delivery
